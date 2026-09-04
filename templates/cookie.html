@@ -388,6 +388,7 @@
     let tapcookie = 0;
     let totalTaps = 0;
     let combo = 1;
+    let comboStreak = 0;
     let comboTimer = null;
     const comboBadge = document.getElementById("comboBadge");
     const tapCountDisplay = document.getElementById("tapCountDisplay");
@@ -401,9 +402,12 @@
       totalTaps++;
       if (tapCountDisplay) tapCountDisplay.textContent = totalTaps.toLocaleString();
 
-      // Combo Accumulation
-      combo = Math.min(10, combo + 0.2);
-      const roundedCombo = Math.floor(combo);
+      // Deterministic Integer Streak Combo Accumulation
+      // Every 5 consecutive taps within 1.8s adds +1 to combo multiplier, capped at 10x
+      comboStreak++;
+      combo = Math.min(10, 1 + Math.floor(comboStreak / 5));
+      const roundedCombo = combo;
+
       if (comboBadge) {
         comboBadge.textContent = "x" + roundedCombo;
         if (roundedCombo > 1) {
@@ -416,6 +420,7 @@
 
       clearTimeout(comboTimer);
       comboTimer = setTimeout(() => {
+        comboStreak = 0;
         combo = 1;
         if (comboBadge) {
           comboBadge.textContent = "x1";
@@ -435,12 +440,17 @@
 
       playTapSound();
 
-      // Spawn particle at click coordinate
+      // Spawn particle at click coordinate or centered over the giant cookie
       let x = window.innerWidth / 2;
       let y = window.innerHeight / 2;
+      const cookieTarget = document.getElementById("cookieTap");
       if (event && event.clientX) {
         x = event.clientX;
         y = event.clientY;
+      } else if (cookieTarget) {
+        const rect = cookieTarget.getBoundingClientRect();
+        x = rect.left + rect.width / 2 + (Math.random() * 30 - 15);
+        y = rect.top + rect.height / 2 + (Math.random() * 30 - 15);
       }
       spawnParticle(x, y, earned > 1 ? "+" + earned + " COMBO!" : "+1");
     }
@@ -473,7 +483,8 @@
       .then(res => res.json())
       .then(data => {
         if (data.respond !== "not found") {
-          cacheShowMyCookie = parseInt(data.respond) || 0;
+          const serverBase = parseInt(data.respond) || 0;
+          cacheShowMyCookie = serverBase + tapcookie;
           document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
           localStorage.setItem("cookies", cacheShowMyCookie);
           
@@ -729,7 +740,9 @@
         // Steal 15% of total cookies (minimum 20, max 500)
         const stolen = Math.min(500, Math.max(20, Math.floor((cacheShowMyCookie || 0) * 0.15)));
         
-        // Shatter active combo multiplier!
+        // Shatter active combo multiplier & clear pending timer!
+        clearTimeout(comboTimer);
+        comboStreak = 0;
         combo = 1;
         if (comboBadge) {
           comboBadge.textContent = "x1";
@@ -1057,6 +1070,13 @@
         if (data.respond === "succes") {
           cacheShowMyCookie = 0;
           tapcookie = 0;
+          comboStreak = 0;
+          combo = 1;
+          clearTimeout(comboTimer);
+          if (comboBadge) {
+            comboBadge.textContent = "x1";
+            comboBadge.classList.remove("active");
+          }
           localStorage.setItem("cookies", 0);
           document.getElementById("showCookies").textContent = "0";
           if (modalCookieDisplay) modalCookieDisplay.textContent = "0";
