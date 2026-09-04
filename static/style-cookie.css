@@ -615,6 +615,135 @@ a {
   box-shadow: 0 0 6px var(--color-accent-magenta);
 }
 
+/* Cookie Vault Dashboard & Telemetry */
+.vault-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.vault-bank-card {
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vault-bank-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vault-bank-tag {
+  font-size: var(--font-size-label);
+  font-weight: 700;
+  color: var(--color-cabinet-navy);
+  letter-spacing: 0.04em;
+}
+
+.vault-status-pill {
+  font-size: var(--font-size-label);
+  font-weight: 700;
+  color: var(--color-cabinet-navy);
+  background: var(--color-accent-green);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-cabinet-navy);
+  letter-spacing: 0.04em;
+}
+
+.vault-bank-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.vault-number {
+  font-family: var(--font-display);
+  font-size: var(--font-size-headline);
+  color: var(--color-cookie-caramel);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.vault-unit {
+  font-family: var(--font-display);
+  font-size: var(--font-size-title);
+  color: var(--color-cabinet-navy);
+  letter-spacing: 0.04em;
+}
+
+.vault-bank-footer {
+  font-size: var(--font-size-label);
+  color: var(--color-muted);
+  border-top: 1px dashed var(--color-border);
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
+.vault-telemetry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.telemetry-card {
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.telemetry-label {
+  font-size: var(--font-size-label);
+  font-weight: 700;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+}
+
+.telemetry-value {
+  font-family: var(--font-display);
+  font-size: var(--font-size-title);
+  color: var(--color-primary);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.vault-guest-warning {
+  background: var(--color-bg);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-accent-magenta);
+  font-size: var(--font-size-label);
+  color: var(--color-cabinet-navy);
+}
+
+.vault-guest-link {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.vault-action-row {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.vault-action-btn {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: var(--font-size-title);
+  white-space: nowrap;
+}
+
 .ds-form {
   display: grid;
   gap: 14px;
@@ -1313,6 +1442,10 @@ a {
 
   .ticker-text {
     font-size: var(--font-size-body);
+  }
+
+  .vault-action-row {
+    flex-direction: column;
   }
 }
 

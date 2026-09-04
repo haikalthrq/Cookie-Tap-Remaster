@@ -106,7 +106,7 @@
     <!-- Lower Arcade Control Deck -->
     <div class="arcade-deck-row">
       <!-- Cookie Vault Panel -->
-      <section class="ds-panel" aria-label="Cookie Vault Statistics">
+      <section class="ds-panel vault-panel" aria-label="Cookie Vault Statistics">
         <header class="panel-header">
           <h2 class="panel-title">My Cookie Vault &#127850;</h2>
           <div id="syncBadge" class="sync-badge">
@@ -114,11 +114,54 @@
             <span id="syncStatus">Synced</span>
           </div>
         </header>
-        <p style="font-size: var(--font-size-label); color: var(--color-muted); line-height: 1.4;">
-          Your baked cookies are securely banked in your personal vault. Taps auto-sync every 5s with the server.
-        </p>
-        <div id="guestWarning" style="display: none; background: var(--color-bg); padding: 8px 12px; border-radius: var(--radius-md); border: 1.5px solid var(--color-accent-magenta); font-size: var(--font-size-label); color: var(--color-cabinet-navy);">
-          &#9888; You are playing as Guest. <a href="/login" style="color: var(--color-primary); font-weight: 700; text-decoration: underline;">Login here</a> to compete on the global leaderboard!
+
+        <!-- Vault Safe Balance Card -->
+        <div class="vault-bank-card">
+          <div class="vault-bank-header">
+            <span class="vault-bank-tag">&#127974; SAFE BALANCE</span>
+            <span class="vault-status-pill">&#128737;&#65039; PROTECTED</span>
+          </div>
+          <div class="vault-bank-amount">
+            <span id="vaultBalanceNumber" class="vault-number">0</span>
+            <span class="vault-unit">COOKIES</span>
+          </div>
+          <div class="vault-bank-footer">
+            <span>&#128337; Taps auto-sync every 5s with server</span>
+          </div>
+        </div>
+
+        <!-- Session Telemetry Grid -->
+        <div class="vault-telemetry-grid">
+          <div class="telemetry-card">
+            <span class="telemetry-label">&#9889; PEAK COMBO</span>
+            <span id="vaultStatMaxCombo" class="telemetry-value">x1</span>
+          </div>
+          <div class="telemetry-card">
+            <span class="telemetry-label">&#128293; TOTAL TAPS</span>
+            <span id="vaultStatTotalTaps" class="telemetry-value">0</span>
+          </div>
+          <div class="telemetry-card">
+            <span class="telemetry-label">&#128373;&#65039; THIEVES FOILED</span>
+            <span id="vaultStatThievesDefeated" class="telemetry-value">0</span>
+          </div>
+          <div class="telemetry-card">
+            <span class="telemetry-label">&#127873; GIFTS SENT</span>
+            <span id="vaultStatGiftsSent" class="telemetry-value">0</span>
+          </div>
+        </div>
+
+        <div id="guestWarning" class="vault-guest-warning" style="display: none;">
+          &#9888; You are playing as Guest. <a href="/login" class="vault-guest-link">Login here</a> to compete on the global leaderboard!
+        </div>
+
+        <!-- Vault Quick Action Row -->
+        <div class="vault-action-row">
+          <a href="/leaderboard" class="ds-btn-action vault-action-btn" onclick="playBtnAudio()">
+            &#127942; Hall of Fame
+          </a>
+          <button type="button" class="ds-btn-secondary vault-action-btn" onclick="openAccountModal()">
+            &#9881;&#65039; Account Menu
+          </button>
         </div>
       </section>
 
@@ -390,9 +433,26 @@
     let combo = 1;
     let comboStreak = 0;
     let comboTimer = null;
+    let peakCombo = 1;
+    let thievesDefeated = 0;
+    let sessionGiftsSent = 0;
+
     const comboBadge = document.getElementById("comboBadge");
     const tapCountDisplay = document.getElementById("tapCountDisplay");
     const tickerStatusText = document.getElementById("tickerStatusText");
+    const vaultBalanceNumber = document.getElementById("vaultBalanceNumber");
+    const vaultStatMaxCombo = document.getElementById("vaultStatMaxCombo");
+    const vaultStatTotalTaps = document.getElementById("vaultStatTotalTaps");
+    const vaultStatThievesDefeated = document.getElementById("vaultStatThievesDefeated");
+    const vaultStatGiftsSent = document.getElementById("vaultStatGiftsSent");
+
+    function updateVaultTelemetry() {
+      if (vaultBalanceNumber) vaultBalanceNumber.textContent = (cacheShowMyCookie || 0).toLocaleString();
+      if (vaultStatMaxCombo) vaultStatMaxCombo.textContent = "x" + peakCombo;
+      if (vaultStatTotalTaps) vaultStatTotalTaps.textContent = totalTaps.toLocaleString();
+      if (vaultStatThievesDefeated) vaultStatThievesDefeated.textContent = thievesDefeated.toLocaleString();
+      if (vaultStatGiftsSent) vaultStatGiftsSent.textContent = sessionGiftsSent.toLocaleString();
+    }
 
     function updateTickerStatus(text) {
       if (tickerStatusText) tickerStatusText.innerHTML = text;
@@ -407,6 +467,9 @@
       comboStreak++;
       combo = Math.min(10, 1 + Math.floor(comboStreak / 5));
       const roundedCombo = combo;
+      if (roundedCombo > peakCombo) {
+        peakCombo = roundedCombo;
+      }
 
       if (comboBadge) {
         comboBadge.textContent = "x" + roundedCombo;
@@ -437,6 +500,7 @@
       cacheShowMyCookie = (cacheShowMyCookie || 0) + earned;
       document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
       localStorage.setItem("cookies", cacheShowMyCookie);
+      updateVaultTelemetry();
 
       playTapSound();
 
@@ -471,6 +535,7 @@
         const localSaved = parseInt(localStorage.getItem("cookies")) || 0;
         cacheShowMyCookie = localSaved;
         document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
+        updateVaultTelemetry();
         return;
       }
 
@@ -487,6 +552,7 @@
           cacheShowMyCookie = serverBase + tapcookie;
           document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
           localStorage.setItem("cookies", cacheShowMyCookie);
+          updateVaultTelemetry();
           
           // Random Thief Trigger
           if (cacheShowMyCookie > 40 && !isThiefActive) {
@@ -584,8 +650,10 @@
         submitBtn.textContent = "Send Cookies Now";
         if (data.respond && data.respond[0] === "succes") {
           showGiftNotice("Successfully sent " + quantity + " cookies to " + targetname + "! 🍪", "success");
+          sessionGiftsSent += quantity;
           cacheShowMyCookie = data.respond[1];
           document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
+          updateVaultTelemetry();
           targetInput.value = "";
           quantityInput.value = "";
         } else {
@@ -673,6 +741,7 @@
 
         if (clickCount >= hp) {
           // Defeated!
+          thievesDefeated++;
           if (!isMuted) {
             sfxMalingMati.currentTime = 0;
             sfxMalingMati.play().catch(() => {});
@@ -683,6 +752,7 @@
           tapcookie += bounty;
           document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
           localStorage.setItem("cookies", cacheShowMyCookie);
+          updateVaultTelemetry();
           spawnParticle(posX, posY, "+" + bounty + " BOUNTY! 🎯");
           cleanupThief();
         }
@@ -782,6 +852,7 @@
           cacheShowMyCookie = Math.max(0, (cacheShowMyCookie || 0) - stolen);
           document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
           localStorage.setItem("cookies", cacheShowMyCookie);
+          updateVaultTelemetry();
         }
       }
 
@@ -1080,6 +1151,7 @@
           localStorage.setItem("cookies", 0);
           document.getElementById("showCookies").textContent = "0";
           if (modalCookieDisplay) modalCookieDisplay.textContent = "0";
+          updateVaultTelemetry();
           toggleResetScoreConfirm(false);
           showAccountNotice("Score wiped clean! Cookie vault has been reset to 0.", "success");
         } else if (data.respond === "invalid_credentials") {
