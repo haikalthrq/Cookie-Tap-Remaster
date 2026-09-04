@@ -47,42 +47,84 @@
   <main class="arcade-portal">
     <!-- Top High-Score Marquee Ticker -->
     <aside class="arcade-ticker-bar" aria-label="Arcade announcements">
-      <div class="ticker-tag">👑 HIGH SCORE</div>
-      <div class="ticker-text">1,789,156 COOKIES &bull; CHAMPION: KENNY YOVIN</div>
+      <div class="ticker-tag">&#128081; HIGH SCORE</div>
+      <div id="lobbyChampionTicker" class="ticker-text">LOADING CHAMPION...</div>
     </aside>
 
     <!-- Main Retro Arcade Cabinet Container -->
     <section class="arcade-cabinet-box" aria-label="Game Cabinet">
       <div class="cabinet-marquee">
-        <span class="arcade-pill">INSERT COIN</span>
+        <span id="marqueeLeftPill" class="arcade-pill">INSERT COIN</span>
         <span class="blinking-prompt">&#9733; READY PLAYER ONE &#9733;</span>
-        <span class="arcade-pill">CREDIT: 99</span>
+        <span id="marqueeRightPill" class="arcade-pill">CREDIT: 99</span>
       </div>
 
       <div class="cabinet-screen">
         <h1 class="portal-heading">WELCOME TO <span class="cookie-text">COOKIE TAP!</span></h1>
-        <p class="portal-slogan">Let our cookies blast in your mouth! Build the ultimate cookie empire, compete with friends, and protect your vault from sneaky thieves!</p>
+        <p class="portal-slogan">Bake giant cookies, protect your vault from sneaky thieves, and dominate the global leaderboard!</p>
 
-        <!-- Interactive Hero Cookie Stage -->
+        <!-- Clean Hero Cookie Emblem (Click to Enter Game) -->
         <div class="cookie-hero-stage">
           <div class="cookie-aura"></div>
-          <button class="cookie-preview-btn" id="heroCookieBtn" aria-label="Test tap the giant cookie" onclick="previewTap(event)"></button>
-          <div class="cookie-tap-badge">&#9654; CLICK TO TEST TAP!</div>
+          <a href="/cookie" class="cookie-hero-link" aria-label="Enter Cookie Tap game and start baking" onclick="playTapAudio()">
+            <div class="cookie-preview-btn"></div>
+          </a>
         </div>
 
-        <!-- Game Feature Badges -->
-        <div class="game-feature-ribbon">
-          <span class="feature-tag">&#127918; 1P RETRO ARCADE</span>
-          <span class="feature-tag">&#128373;&#65039; SNEAKY THIEVES</span>
-          <span class="feature-tag">&#127942; LIVE LEADERBOARD</span>
-          <span class="feature-tag">&#127850; COOKIE VAULT</span>
-        </div>
+        <!-- Dynamic Portal CTA Decks -->
+        <div class="portal-cta-container">
+          <!-- Authenticated State (When player is already logged in) -->
+          <div id="homeAuthView" class="auth-welcome-deck" style="display: none;">
+            <div class="pilot-status-card">
+              <div class="pilot-badge-row">
+                <span class="pilot-role-tag">ARCADE PILOT</span>
+                <span id="pilotVaultStatus" class="pilot-status-pill">&#128737;&#65039; VAULT ONLINE</span>
+              </div>
+              <div class="pilot-info-row">
+                <span class="pilot-avatar">&#128100;</span>
+                <div class="pilot-details">
+                  <span id="homeUsernameDisplay" class="pilot-name">PILOT</span>
+                  <span class="pilot-subtext">&#127850; Vault: <strong id="homeCookieDisplay">0</strong> cookies banked</span>
+                </div>
+              </div>
+            </div>
 
-        <!-- Action Button CTAs -->
-        <div class="cta-stack">
-          <a href="/login" class="ds-btn-action" onclick="playTapAudio()">&#9654; LOGIN NOW</a>
-          <a href="/register" class="ds-btn-action" onclick="playTapAudio()">&#9733; REGISTER NEW ACCOUNT</a>
-          <button id="howToPlayBtn" class="ds-btn-secondary" onclick="openHowToPlay()">&#10068; HOW TO PLAY</button>
+            <a href="/cookie" class="ds-btn-action btn-hero-play" onclick="playTapAudio()">
+              &#9654; CONTINUE BAKING
+            </a>
+
+            <div class="home-secondary-row">
+              <a href="/leaderboard" class="ds-btn-secondary home-sub-btn" onclick="playTapAudio()">
+                &#127942; Leaderboard
+              </a>
+              <button type="button" class="ds-btn-secondary home-sub-btn" onclick="openHowToPlay()">
+                &#10068; How to Play
+              </button>
+              <button type="button" class="ds-btn-secondary home-sub-btn btn-logout" onclick="handleHomeLogout()">
+                &#128682; Logout
+              </button>
+            </div>
+          </div>
+
+          <!-- Guest State (When player is NOT logged in) -->
+          <div id="homeGuestView" class="guest-welcome-deck" style="display: none;">
+            <a href="/cookie" class="ds-btn-action btn-hero-play" onclick="playTapAudio()">
+              &#9654; PLAY AS GUEST
+            </a>
+
+            <div class="home-auth-grid">
+              <a href="/login" class="ds-btn-secondary home-grid-btn" onclick="playTapAudio()">
+                &#128273; LOGIN NOW
+              </a>
+              <a href="/register" class="ds-btn-action home-grid-btn" onclick="playTapAudio()">
+                &#9733; REGISTER
+              </a>
+            </div>
+
+            <button type="button" id="howToPlayBtn" class="ds-btn-secondary home-how-btn" onclick="openHowToPlay()">
+              &#10068; HOW TO PLAY
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -125,7 +167,6 @@
   <script>
     // Audio Management
     const sfxButton = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    const sfxCookieTap = new Audio("{{url_for('static', filename='assets/cookie_tap.mp3')}}");
     const bgLobbyMusic = new Audio("{{url_for('static', filename='assets/lobby_theme.mp3')}}");
     bgLobbyMusic.loop = true;
     bgLobbyMusic.volume = 0.5;
@@ -137,31 +178,6 @@
       if (!isMuted) {
         sfxButton.currentTime = 0;
         sfxButton.play().catch(() => {});
-      }
-    }
-
-    function previewTap(e) {
-      if (!isMuted) {
-        sfxCookieTap.currentTime = 0;
-        sfxCookieTap.play().catch(() => {});
-      }
-
-      // Create floating "+1" arcade particle
-      const stage = document.querySelector('.cookie-hero-stage');
-      if (stage) {
-        const particle = document.createElement('div');
-        particle.className = 'tap-particle';
-        particle.textContent = '+1';
-
-        const rect = stage.getBoundingClientRect();
-        const clientX = e ? e.clientX : (rect.left + rect.width / 2);
-        const clientY = e ? e.clientY : (rect.top + rect.height / 2);
-
-        particle.style.left = (clientX - rect.left) + 'px';
-        particle.style.top = (clientY - rect.top) + 'px';
-
-        stage.appendChild(particle);
-        setTimeout(() => particle.remove(), 600);
       }
     }
 
@@ -189,17 +205,17 @@
       document.removeEventListener("click", startLobbyMusic);
     }, { once: true });
 
-    // Modal Handling
+    // How to Play Modal Handling
     const modal = document.getElementById("howToPlayModal");
 
     function openHowToPlay() {
       playTapAudio();
-      modal.style.display = "flex";
+      if (modal) modal.style.display = "flex";
     }
 
     function closeHowToPlay() {
       playTapAudio();
-      modal.style.display = "none";
+      if (modal) modal.style.display = "none";
     }
 
     window.addEventListener("click", (e) => {
@@ -207,25 +223,80 @@
     });
 
     window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && modal.style.display === "flex") {
+      if (e.key === "Escape" && modal && modal.style.display === "flex") {
         closeHowToPlay();
       }
     });
 
-    // Check Player Session
-    const savedUser = localStorage.getItem("username");
-    const navUserLabel = document.getElementById("navUserLabel");
-    const navUserBtn = document.getElementById("navUserBtn");
-    if (savedUser) {
-      if (navUserLabel) navUserLabel.textContent = savedUser.toUpperCase();
-      if (navUserBtn) navUserBtn.title = "Jump to Vault & Settings";
-    } else {
-      if (navUserLabel) navUserLabel.textContent = "LOGIN";
-      if (navUserBtn) {
-        navUserBtn.href = "/login";
-        navUserBtn.title = "Player Login";
+    // Dynamic Player Session & Deck Initialization
+    function initHomeSession() {
+      const savedUser = localStorage.getItem("username");
+      const savedCookies = parseInt(localStorage.getItem("cookies")) || 0;
+      const navUserLabel = document.getElementById("navUserLabel");
+      const navUserBtn = document.getElementById("navUserBtn");
+      const homeAuthView = document.getElementById("homeAuthView");
+      const homeGuestView = document.getElementById("homeGuestView");
+      const marqueeLeftPill = document.getElementById("marqueeLeftPill");
+      const marqueeRightPill = document.getElementById("marqueeRightPill");
+
+      if (savedUser) {
+        if (navUserLabel) navUserLabel.textContent = savedUser.toUpperCase();
+        if (navUserBtn) {
+          navUserBtn.href = "/cookie";
+          navUserBtn.title = "Jump to Vault & Settings";
+        }
+        if (homeAuthView) homeAuthView.style.display = "flex";
+        if (homeGuestView) homeGuestView.style.display = "none";
+        
+        const nameEl = document.getElementById("homeUsernameDisplay");
+        const cookieEl = document.getElementById("homeCookieDisplay");
+        if (nameEl) nameEl.textContent = savedUser.toUpperCase();
+        if (cookieEl) cookieEl.textContent = savedCookies.toLocaleString();
+
+        if (marqueeLeftPill) marqueeLeftPill.textContent = "1P READY";
+        if (marqueeRightPill) marqueeRightPill.textContent = "ONLINE";
+      } else {
+        if (navUserLabel) navUserLabel.textContent = "LOGIN";
+        if (navUserBtn) {
+          navUserBtn.href = "/login";
+          navUserBtn.title = "Player Login";
+        }
+        if (homeAuthView) homeAuthView.style.display = "none";
+        if (homeGuestView) homeGuestView.style.display = "flex";
+
+        if (marqueeLeftPill) marqueeLeftPill.textContent = "INSERT COIN";
+        if (marqueeRightPill) marqueeRightPill.textContent = "CREDIT: 99";
       }
     }
+
+    function handleHomeLogout() {
+      playTapAudio();
+      localStorage.removeItem("username");
+      localStorage.removeItem("password");
+      localStorage.removeItem("cookies");
+      initHomeSession();
+    }
+
+    // Live High-Score Marquee Sync
+    function syncLobbyChampion() {
+      fetch('/showLeaderboard')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.length > 0) {
+            const champCookies = parseInt(data[0][0]) || 0;
+            const champName = data[0][1] || "PILOT";
+            const tickerEl = document.getElementById("lobbyChampionTicker");
+            if (tickerEl) {
+              tickerEl.textContent = champCookies.toLocaleString() + " COOKIES • CHAMPION: " + champName.toUpperCase();
+            }
+          }
+        })
+        .catch(err => console.error("Champion ticker sync error:", err));
+    }
+
+    // Initialize session & champion ticker
+    initHomeSession();
+    syncLobbyChampion();
   </script>
 </body>
 </html>
