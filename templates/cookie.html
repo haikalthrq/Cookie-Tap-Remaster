@@ -52,7 +52,7 @@
         <span class="ticker-label">PLAYER:</span>
         <span id="playerBadge" class="ticker-badge">GUEST</span>
       </div>
-      <div class="ticker-text">TAP TO BAKE &bull; CATCH SNEAKY THIEVES!</div>
+      <div id="tickerStatusText" class="ticker-text">BAKE &amp; DEFEND! &#127850;</div>
     </aside>
 
     <!-- Thief Hazard Alert Banner -->
@@ -391,6 +391,11 @@
     let comboTimer = null;
     const comboBadge = document.getElementById("comboBadge");
     const tapCountDisplay = document.getElementById("tapCountDisplay");
+    const tickerStatusText = document.getElementById("tickerStatusText");
+
+    function updateTickerStatus(text) {
+      if (tickerStatusText) tickerStatusText.innerHTML = text;
+    }
 
     function taptap(event) {
       totalTaps++;
@@ -403,6 +408,9 @@
         comboBadge.textContent = "x" + roundedCombo;
         if (roundedCombo > 1) {
           comboBadge.classList.add("active");
+          if (!isThiefActive) {
+            updateTickerStatus("&#9889; COMBO x" + roundedCombo + "!");
+          }
         }
       }
 
@@ -412,6 +420,9 @@
         if (comboBadge) {
           comboBadge.textContent = "x1";
           comboBadge.classList.remove("active");
+        }
+        if (!isThiefActive) {
+          updateTickerStatus("BAKE &amp; DEFEND! &#127850;");
         }
       }, 1800);
 
@@ -602,6 +613,7 @@
         statusPill.textContent = "⚠️ INVASION!";
         statusPill.style.backgroundColor = "var(--color-accent-magenta)";
       }
+      updateTickerStatus("&#9888;&#65039; DEFEND VAULT!");
 
       if (!isMuted) {
         sfxMalingSpawn.currentTime = 0;
@@ -768,6 +780,7 @@
           statusPill.style.backgroundColor = "var(--color-accent-magenta)";
         }
         if (thiefEl.parentNode) thiefEl.remove();
+        updateTickerStatus("BAKE &amp; DEFEND! &#127850;");
       }
     }
 

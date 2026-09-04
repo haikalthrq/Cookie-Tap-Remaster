@@ -252,10 +252,9 @@ a {
   color: #ffffff;
   letter-spacing: 0.04em;
   white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
   text-align: right;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 /* Thief Alert Banner */
@@ -1296,8 +1295,25 @@ a {
   background-color: var(--color-accent-magenta-hover);
 }
 
-.danger-confirm-btn.delete {
-  background-color: var(--color-accent-magenta);
+@media (max-width: 520px) {
+  .arcade-ticker-bar {
+    padding: 6px 12px;
+    gap: 8px;
+  }
+
+  .ticker-label {
+    font-size: var(--font-size-body);
+  }
+
+  .ticker-badge {
+    font-size: var(--font-size-body);
+    padding: 2px 6px;
+    max-width: 130px;
+  }
+
+  .ticker-text {
+    font-size: var(--font-size-body);
+  }
 }
 
 /* Accessibility */
