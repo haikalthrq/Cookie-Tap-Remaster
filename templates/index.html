@@ -178,7 +178,7 @@
         <div id="accountGuestView" class="account-panel-box" style="display: none;">
           <div class="account-guest-icon">&#128100;</div>
           <h3 class="account-section-title">GUEST PILOT</h3>
-          <p class="account-desc">You are playing as a guest. Log in or register an account to save cookies to the leaderboard and manage your profile.</p>
+          <p class="account-desc">You are currently playing as a guest. Log in or register an arcade callsign to access profile settings and save cookies to the global leaderboards!</p>
           <div class="account-btn-group">
             <a href="/login" class="ds-btn-action" onclick="playTapAudio()">&#9654; Login</a>
             <a href="/register" class="ds-btn-secondary" onclick="playTapAudio()">Register</a>
@@ -221,7 +221,7 @@
             <!-- Change Username Section -->
             <form id="changeUsernameForm" class="account-form-section" onsubmit="event.preventDefault(); submitChangeUsername();">
               <h4 class="form-section-heading">&#128100; Change Username</h4>
-              <p class="form-section-caption">Choose a new username (1-15 characters). Your score and vault remain intact.</p>
+              <p class="form-section-caption">Update your arcade callsign (1-15 characters). Your score and vault remain intact.</p>
               <div class="ds-field-wrapper">
                 <label class="ds-field-label" for="newUsernameInput">NEW USERNAME</label>
                 <input id="newUsernameInput" class="ds-field-input" type="text" maxlength="15" placeholder="New callsign" required autocomplete="off">
@@ -240,7 +240,7 @@
             <!-- Change Password Section -->
             <form id="changePasswordForm" class="account-form-section" onsubmit="event.preventDefault(); submitChangePassword();">
               <h4 class="form-section-heading">&#128273; Change Password</h4>
-              <p class="form-section-caption">Enter your current password and choose a new one (1-15 characters).</p>
+              <p class="form-section-caption">Secure your cookie vault by setting a new password (1-15 characters).</p>
               <div class="ds-field-wrapper">
                 <label class="ds-field-label" for="oldPasswordInput">CURRENT PASSWORD</label>
                 <input id="oldPasswordInput" class="ds-field-input" type="password" placeholder="Current password" required autocomplete="current-password">
@@ -262,7 +262,7 @@
                 <span class="danger-icon">&#9888;&#65039;</span>
                 <div>
                   <h4 class="danger-title">High Risk Zone</h4>
-                  <p class="danger-desc">Actions in this zone cannot be reversed.</p>
+                  <p class="danger-desc">Actions in this zone cannot be reversed. Please proceed with extreme caution.</p>
                 </div>
               </div>
 
