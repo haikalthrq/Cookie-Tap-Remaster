@@ -90,6 +90,8 @@
       return div.innerHTML;
     }
 
+    let lastLeaderboardSnapshot = "";
+
     function fetchLeaderboard() {
       fetch('/showLeaderboard', {
         method: 'POST',
@@ -106,8 +108,16 @@
           container.innerHTML = '<div class="loading-notice">No bakers recorded yet. Be the first to tap!</div>';
           ticker.textContent = "BE THE FIRST TO SET A RECORD!";
           countBadge.textContent = "PLAYERS: 0";
+          lastLeaderboardSnapshot = "";
           return;
         }
+
+        // Fast fingerprinting check: skip DOM teardown if leaderboard hasn't changed
+        const snapshot = JSON.stringify(data);
+        if (snapshot === lastLeaderboardSnapshot) {
+          return;
+        }
+        lastLeaderboardSnapshot = snapshot;
 
         countBadge.textContent = "PLAYERS: " + data.length;
 

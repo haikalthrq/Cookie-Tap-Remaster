@@ -1,364 +1,209 @@
 from flask import Flask, request, render_template
-from flask_cors import CORS, cross_origin
 import json
 import threading
 import time
-import requests
-#json.dump  --[save]
-#json.load --[load]
+import database
 
-#format json
-#{account:
-#[{username:username,
-#password:password,
-#cookie:cookie}]}
 serverStatus = 1
-dataCache = []
-
-
-def writeDatabase(save):
-  database = open(r"database.json", "w")
-  for x in save["account"]:
-    if type(x["cookie"]) != type(12):
-      x["cookie"] = 1
-  database.write(json.dumps(save))
-  database.close()
-
-
-def loadDatabase():
-  database = open(r"database.json", "r")
-  tempdata = json.loads(database.read())  #dict database
-  database.close()
-  return tempdata
-
-
-def antikaisan(database):
-  for x in database["account"]:
-    #print(x["cookie"])
-    if type(x["cookie"]) != type(5):
-      x["cookie"] = 1
-  writeDatabase(database)
-  return loadDatabase()
-
-
-def userfinder(database, name):
-  indeks = 0
-  for x in database.keys():
-    if x == "account":
-      break
-  for i in database[x]:
-
-    if i["username"] == name:
-      return "found", indeks
-    indeks += 1
-  return "not found", indeks - 1
-
-
-def userFinderLogin(database, name, password):
-  indeks = 0
-  for x in database.keys():
-    if x == "account":
-      break
-  for i in database[x]:
-
-    if i["username"] == name and i["password"] == password:
-      return "found", indeks
-    indeks += 1
-  return "not found", indeks
-
-
-def sortBoard(data):
-  leaderboard = []
-  for x in data:
-    temp = []
-    temp.append(x["cookie"])
-    temp.append(x["username"])
-    leaderboard.append(temp)
-  leaderboard.sort()
-  leaderboard.reverse()
-  return leaderboard
-
-
-def updateLeaderboard():
-  try:
-    data = loadDatabase()
-    antikaisan(data)
-    save = sortBoard(data["account"])
-    with open(r"leaderboard.json", "w") as database:
-      database.write(json.dumps(save))
-  except Exception as e:
-    print("Leaderboard update error:", e)
-
-
-def sendLeaderboard():
-  while True:
-    time.sleep(7)
-    updateLeaderboard()
-
 
 api = Flask(__name__)
 api.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
-#----------website below------------------#
-#CORS(api)
+# ---------- Page Routing Below ---------- #
 @api.route("/antiSleep", methods=["GET"])
 def sleepReceive():
-  return "dont sleep"
+    return "dont sleep"
 
 
 @api.route("/", methods=["GET"])
 def landing_page():
-  global serverStatus
-  if serverStatus == 1:
-    return render_template("index.html")
-  elif serverStatus == 0:
+    global serverStatus
+    if serverStatus == 1:
+        return render_template("index.html")
     return render_template("error.html")
 
 
 @api.route("/login", methods=["GET"])
 def login_page():
-  if serverStatus == 1:
-    return render_template("login.html")
-  elif serverStatus == 0:
+    if serverStatus == 1:
+        return render_template("login.html")
     return render_template("error.html")
 
 
 @api.route("/register", methods=["GET"])
 def register_page():
-  if serverStatus == 1:
-    return render_template("register.html")
-  elif serverStatus == 0:
+    if serverStatus == 1:
+        return render_template("register.html")
     return render_template("error.html")
 
 
 @api.route("/cookie", methods=["GET"])
 def cookie_page():
-  if serverStatus == 1:
-    return render_template("cookie.html")
-  elif serverStatus == 0:
+    if serverStatus == 1:
+        return render_template("cookie.html")
     return render_template("error.html")
 
 
 @api.route("/leaderboard", methods=["GET"])
 def leaderboard_page():
-  if serverStatus == 1:
-    return render_template("leaderboard.html")
-  elif serverStatus == 0:
+    if serverStatus == 1:
+        return render_template("leaderboard.html")
     return render_template("error.html")
 
 
-#----------operation below------------------#
-@api.route("/registers", methods=["POST"])  #{request:[username,password]}
+# ---------- API Operations Below ---------- #
+@api.route("/registers", methods=["POST"])
 def register():
-
-  tempdata = loadDatabase()  #dict database
-
-  tempregis = json.loads(request.data)
-  tempname = tempregis["request"][0]
-  temppass = tempregis["request"][1]
-  find_user, indeks = userfinder(tempdata, tempname)
-  if find_user == "not found":
-    tempdict = {}
-    tempdict.update({"username": tempname, "password": temppass, "cookie": 0})
-    tempdata["account"].append(tempdict)
-    writeDatabase(tempdata)
-    return json.dumps({"respond": "succes"})
-  elif find_user == "found":
-    return json.dumps({"respond": "existed"})
+    try:
+        req = json.loads(request.data)
+        username = req["request"][0]
+        password = req["request"][1]
+        res = database.register_user(username, password)
+        return json.dumps({"respond": res})
+    except Exception as e:
+        return json.dumps({"respond": "error", "message": str(e)})
 
 
-@api.route("/logins", methods=["POST"])  #{request:[username,password]}
+@api.route("/logins", methods=["POST"])
 def login():
-
-  tempdata = loadDatabase()  #dict database
-
-  templogin = json.loads(request.data)
-  tempname = templogin["request"][0]
-  temppass = templogin["request"][1]
-  find_user, indeks = userFinderLogin(tempdata, tempname, temppass)
-  if find_user == "not found":
-    return json.dumps({"respond": "not found"})
-  elif find_user == "found":
-    accObj = tempdata["account"][indeks]
-
-    return json.dumps({"respond": (accObj["cookie"])})
+    try:
+        req = json.loads(request.data)
+        username = req["request"][0]
+        password = req["request"][1]
+        auth_ok, user = database.authenticate_user(username, password)
+        if not auth_ok or not user:
+            return json.dumps({"respond": "not found"})
+        return json.dumps({"respond": user["cookie"]})
+    except Exception as e:
+        return json.dumps({"respond": "error", "message": str(e)})
 
 
-@api.route("/sendCookies",
-           methods=["POST"])  #{request:[username,password,cookie]} every 5 sec
+@api.route("/sendCookies", methods=["POST"])
 def send_cookies():
+    try:
+        req = json.loads(request.data)
+        username = req["request"][0]
+        # req["request"][1] is password (legacy compatibility)
+        amount = req["request"][2]
 
-  tempdata = loadDatabase()  #dict database
-  tempuser = json.loads(request.data)
-  tempname = tempuser["request"][0]
-  temppass = tempuser["request"][1]
-  tempcookie = tempuser["request"][2]
-  if type(tempcookie) != type(12):
-    return "not now :)"
-  if tempcookie > 50000:
-    tempcookie = 50000
-  find_user, indeks = userfinder(tempdata, tempname)
-  tempdata["account"][indeks]["cookie"] += tempcookie
-  if tempdata["account"][indeks]["cookie"] < 0:
-    tempdata["account"][indeks]["cookie"] = 0
-  writeDatabase(tempdata)
-  return json.dumps({"respond": "succes"})
+        if not isinstance(amount, int):
+            return "not now :)"
+        if amount > 50000:
+            amount = 50000
+
+        new_balance = database.add_cookies(username, amount)
+        if new_balance is None:
+            return json.dumps({"respond": "not found"})
+        return json.dumps({"respond": "succes", "cookies": new_balance})
+    except Exception as e:
+        return json.dumps({"respond": "error", "message": str(e)})
 
 
-@api.route("/showCookies", methods=["POST"])  #{request:[username,password]}
+@api.route("/showCookies", methods=["POST"])
 def show_cookies():
+    try:
+        req = json.loads(request.data)
+        username = req["request"][0]
+        user = database.get_user(username)
+        if not user:
+            return json.dumps({"respond": "not found"})
+        return json.dumps({"respond": user["cookie"]})
+    except Exception as e:
+        return json.dumps({"respond": "error", "message": str(e)})
 
-  tempdata = loadDatabase()  #dict database
-  tempuser = json.loads(request.data)
-  tempname = tempuser["request"][0]
-  temppass = tempuser["request"][1]
-  find_user, indeks = userfinder(tempdata, tempname)
 
-  if find_user == "not found":
-    return json.dumps({"respond": "not found"})
-  return json.dumps({"respond": tempdata["account"][indeks]["cookie"]})
-
-
-@api.route("/giveCookies",
-           methods=["POST"])  #{request:[username,amount,targetname]}
+@api.route("/giveCookies", methods=["POST"])
 def give_cookies():
+    try:
+        req = json.loads(request.data)
+        sender = req["request"][0]
+        amount = req["request"][1]
+        target = req["request"][2]
 
-  tempdata = loadDatabase()  #dict database
-  tempuser = json.loads(request.data)
-  tempname = tempuser["request"][0]
-  tempcookie_give = tempuser["request"][1]
-  temptarget = tempuser["request"][2]
-  find_user, indeks = userfinder(tempdata, tempname)
-  target_user, target_indeks = userfinder(tempdata, temptarget)
-  print(tempdata["account"][indeks]["cookie"])
-  print(tempdata["account"][target_indeks]["cookie"])
-  print(tempcookie_give, type(tempcookie_give))
-  try:
-    tempcookie_give = int(tempcookie_give)
-  except:
-    return json.dumps({"respond": "failed"})
-
-  if find_user == "found" and target_user == "found":
-
-    if tempcookie_give <= tempdata["account"][indeks]["cookie"]:
-      tempdata["account"][target_indeks]["cookie"] += tempcookie_give
-      tempdata["account"][indeks]["cookie"] -= tempcookie_give
-      writeDatabase(tempdata)
-      return json.dumps(
-        {"respond": ["succes", tempdata["account"][indeks]["cookie"]]})
-  return json.dumps({"respond": "failed"})
+        ok, result = database.transfer_cookies(sender, amount, target)
+        if ok:
+            return json.dumps({"respond": ["succes", result]})
+        return json.dumps({"respond": "failed"})
+    except Exception as e:
+        return json.dumps({"respond": "error", "message": str(e)})
 
 
 @api.route("/showLeaderboard", methods=["GET", "POST"])
 def showLeaderboard():
-  try:
-    with open(r"leaderboard.json", "r") as database:
-      tempdata = json.loads(database.read())
-    return json.dumps(tempdata)
-  except Exception:
-    updateLeaderboard()
     try:
-      with open(r"leaderboard.json", "r") as database:
-        tempdata = json.loads(database.read())
-      return json.dumps(tempdata)
-    except Exception:
-      return json.dumps([])
+        board = database.get_leaderboard()
+        return json.dumps(board)
+    except Exception as e:
+        print("Show leaderboard error:", e)
+        return json.dumps([])
 
 
-@api.route("/changePassword", methods=["POST"])  # {request: [username, old_pass, new_pass]}
+@api.route("/changePassword", methods=["POST"])
 def change_password():
-  try:
-    tempdata = loadDatabase()
-    req_data = json.loads(request.data)
-    tempname = str(req_data["request"][0]).strip()
-    old_pass = str(req_data["request"][1])
-    new_pass = str(req_data["request"][2])
+    try:
+        req = json.loads(request.data)
+        username = req["request"][0]
+        old_pass = req["request"][1]
+        new_pass = req["request"][2]
 
-    find_user, indeks = userFinderLogin(tempdata, tempname, old_pass)
-    if find_user == "not found":
-      return json.dumps({"respond": "invalid_credentials"})
-
-    if not new_pass or len(new_pass) > 15:
-      return json.dumps({"respond": "invalid_format"})
-
-    tempdata["account"][indeks]["password"] = new_pass
-    writeDatabase(tempdata)
-    return json.dumps({"respond": "succes"})
-  except Exception as e:
-    return json.dumps({"respond": "error", "message": str(e)})
+        res = database.change_password(username, old_pass, new_pass)
+        return json.dumps({"respond": res})
+    except Exception as e:
+        return json.dumps({"respond": "error", "message": str(e)})
 
 
-@api.route("/changeUsername", methods=["POST"])  # {request: [old_user, password, new_user]}
+@api.route("/changeUsername", methods=["POST"])
 def change_username():
-  try:
-    tempdata = loadDatabase()
-    req_data = json.loads(request.data)
-    old_name = str(req_data["request"][0]).strip()
-    temppass = str(req_data["request"][1])
-    new_name = str(req_data["request"][2]).strip()
+    try:
+        req = json.loads(request.data)
+        old_name = req["request"][0]
+        password = req["request"][1]
+        new_name = req["request"][2]
 
-    find_user, indeks = userFinderLogin(tempdata, old_name, temppass)
-    if find_user == "not found":
-      return json.dumps({"respond": "invalid_credentials"})
-
-    if not new_name or len(new_name) > 15:
-      return json.dumps({"respond": "invalid_format"})
-
-    existing_user, _ = userfinder(tempdata, new_name)
-    if existing_user == "found" and new_name.lower() != old_name.lower():
-      return json.dumps({"respond": "existed"})
-
-    tempdata["account"][indeks]["username"] = new_name
-    writeDatabase(tempdata)
-    updateLeaderboard()
-    return json.dumps({"respond": "succes", "new_username": new_name})
-  except Exception as e:
-    return json.dumps({"respond": "error", "message": str(e)})
+        res = database.change_username(old_name, password, new_name)
+        if res == "succes":
+            return json.dumps({"respond": "succes", "new_username": new_name})
+        return json.dumps({"respond": res})
+    except Exception as e:
+        return json.dumps({"respond": "error", "message": str(e)})
 
 
-@api.route("/resetScore", methods=["POST"])  # {request: [username, password]}
+@api.route("/resetScore", methods=["POST"])
 def reset_score():
-  try:
-    tempdata = loadDatabase()
-    req_data = json.loads(request.data)
-    tempname = str(req_data["request"][0]).strip()
-    temppass = str(req_data["request"][1])
+    try:
+        req = json.loads(request.data)
+        username = req["request"][0]
+        password = req["request"][1]
 
-    find_user, indeks = userFinderLogin(tempdata, tempname, temppass)
-    if find_user == "not found":
-      return json.dumps({"respond": "invalid_credentials"})
-
-    tempdata["account"][indeks]["cookie"] = 0
-    writeDatabase(tempdata)
-    updateLeaderboard()
-    return json.dumps({"respond": "succes"})
-  except Exception as e:
-    return json.dumps({"respond": "error", "message": str(e)})
+        res = database.reset_score(username, password)
+        return json.dumps({"respond": res})
+    except Exception as e:
+        return json.dumps({"respond": "error", "message": str(e)})
 
 
-@api.route("/deleteAccount", methods=["POST"])  # {request: [username, password]}
+@api.route("/deleteAccount", methods=["POST"])
 def delete_account():
-  try:
-    tempdata = loadDatabase()
-    req_data = json.loads(request.data)
-    tempname = str(req_data["request"][0]).strip()
-    temppass = str(req_data["request"][1])
+    try:
+        req = json.loads(request.data)
+        username = req["request"][0]
+        password = req["request"][1]
 
-    find_user, indeks = userFinderLogin(tempdata, tempname, temppass)
-    if find_user == "not found":
-      return json.dumps({"respond": "invalid_credentials"})
+        res = database.delete_account(username, password)
+        return json.dumps({"respond": res})
+    except Exception as e:
+        return json.dumps({"respond": "error", "message": str(e)})
 
-    del tempdata["account"][indeks]
-    writeDatabase(tempdata)
-    updateLeaderboard()
-    return json.dumps({"respond": "succes"})
-  except Exception as e:
-    return json.dumps({"respond": "error", "message": str(e)})
 
+def sync_worker():
+    while True:
+        time.sleep(10)
+        if database.is_dirty():
+            database.export_json_backup()
 
 
 if __name__ == "__main__":
-  t = threading.Thread(target=sendLeaderboard, daemon=True)
-  t.start()
-  api.run(host="0.0.0.0", port=8080, debug=False)
+    database.init_db()
+    t = threading.Thread(target=sync_worker, daemon=True)
+    t.start()
+    api.run(host="0.0.0.0", port=8080, debug=False)

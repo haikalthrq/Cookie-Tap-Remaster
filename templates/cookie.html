@@ -582,9 +582,14 @@
         body: payload
       })
       .then(res => res.json())
-      .then(() => {
+      .then(data => {
         tapcookie -= currentTaps;
-        showMyCookie();
+        if (data && data.cookies !== undefined) {
+          cacheShowMyCookie = data.cookies + tapcookie;
+          document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
+          localStorage.setItem("cookies", cacheShowMyCookie);
+          updateVaultTelemetry();
+        }
         if (syncDot) syncDot.classList.remove("syncing");
         if (syncStatus) syncStatus.textContent = "Synced";
       })
