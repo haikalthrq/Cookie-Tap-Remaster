@@ -266,6 +266,98 @@ def showLeaderboard():
       return json.dumps([])
 
 
+@api.route("/changePassword", methods=["POST"])  # {request: [username, old_pass, new_pass]}
+def change_password():
+  try:
+    tempdata = loadDatabase()
+    req_data = json.loads(request.data)
+    tempname = str(req_data["request"][0]).strip()
+    old_pass = str(req_data["request"][1])
+    new_pass = str(req_data["request"][2])
+
+    find_user, indeks = userFinderLogin(tempdata, tempname, old_pass)
+    if find_user == "not found":
+      return json.dumps({"respond": "invalid_credentials"})
+
+    if not new_pass or len(new_pass) > 15:
+      return json.dumps({"respond": "invalid_format"})
+
+    tempdata["account"][indeks]["password"] = new_pass
+    writeDatabase(tempdata)
+    return json.dumps({"respond": "succes"})
+  except Exception as e:
+    return json.dumps({"respond": "error", "message": str(e)})
+
+
+@api.route("/changeUsername", methods=["POST"])  # {request: [old_user, password, new_user]}
+def change_username():
+  try:
+    tempdata = loadDatabase()
+    req_data = json.loads(request.data)
+    old_name = str(req_data["request"][0]).strip()
+    temppass = str(req_data["request"][1])
+    new_name = str(req_data["request"][2]).strip()
+
+    find_user, indeks = userFinderLogin(tempdata, old_name, temppass)
+    if find_user == "not found":
+      return json.dumps({"respond": "invalid_credentials"})
+
+    if not new_name or len(new_name) > 15:
+      return json.dumps({"respond": "invalid_format"})
+
+    existing_user, _ = userfinder(tempdata, new_name)
+    if existing_user == "found" and new_name.lower() != old_name.lower():
+      return json.dumps({"respond": "existed"})
+
+    tempdata["account"][indeks]["username"] = new_name
+    writeDatabase(tempdata)
+    updateLeaderboard()
+    return json.dumps({"respond": "succes", "new_username": new_name})
+  except Exception as e:
+    return json.dumps({"respond": "error", "message": str(e)})
+
+
+@api.route("/resetScore", methods=["POST"])  # {request: [username, password]}
+def reset_score():
+  try:
+    tempdata = loadDatabase()
+    req_data = json.loads(request.data)
+    tempname = str(req_data["request"][0]).strip()
+    temppass = str(req_data["request"][1])
+
+    find_user, indeks = userFinderLogin(tempdata, tempname, temppass)
+    if find_user == "not found":
+      return json.dumps({"respond": "invalid_credentials"})
+
+    tempdata["account"][indeks]["cookie"] = 0
+    writeDatabase(tempdata)
+    updateLeaderboard()
+    return json.dumps({"respond": "succes"})
+  except Exception as e:
+    return json.dumps({"respond": "error", "message": str(e)})
+
+
+@api.route("/deleteAccount", methods=["POST"])  # {request: [username, password]}
+def delete_account():
+  try:
+    tempdata = loadDatabase()
+    req_data = json.loads(request.data)
+    tempname = str(req_data["request"][0]).strip()
+    temppass = str(req_data["request"][1])
+
+    find_user, indeks = userFinderLogin(tempdata, tempname, temppass)
+    if find_user == "not found":
+      return json.dumps({"respond": "invalid_credentials"})
+
+    del tempdata["account"][indeks]
+    writeDatabase(tempdata)
+    updateLeaderboard()
+    return json.dumps({"respond": "succes"})
+  except Exception as e:
+    return json.dumps({"respond": "error", "message": str(e)})
+
+
+
 if __name__ == "__main__":
   t = threading.Thread(target=sendLeaderboard, daemon=True)
   t.start()

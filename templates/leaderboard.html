@@ -16,6 +16,9 @@
     </div>
     <div class="header-actions">
       <a href="/cookie" class="ds-btn-action" onclick="playBtnAudio()">&#9654; Back to Game</a>
+      <a id="navUserBtn" href="/cookie" class="ds-btn-secondary" onclick="playBtnAudio()">
+        &#128100; <span id="navUserLabel">ACCOUNT</span>
+      </a>
     </div>
   </header>
 
@@ -151,6 +154,17 @@
     // Initial fetch and 7s auto-sync
     fetchLeaderboard();
     setInterval(fetchLeaderboard, 7000);
+
+    // Check Player Session
+    const savedUser = localStorage.getItem("username");
+    const navUserLabel = document.getElementById("navUserLabel");
+    const navUserBtn = document.getElementById("navUserBtn");
+    if (savedUser) {
+      if (navUserLabel) navUserLabel.textContent = savedUser.toUpperCase();
+    } else {
+      if (navUserLabel) navUserLabel.textContent = "LOGIN";
+      if (navUserBtn) navUserBtn.href = "/login";
+    }
   </script>
 </body>
 </html>

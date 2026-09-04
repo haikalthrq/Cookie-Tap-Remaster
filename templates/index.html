@@ -19,6 +19,9 @@
         SOUND: ON
       </button>
       <a href="/leaderboard" class="ds-btn-action" onclick="playTapAudio()">Leaderboards</a>
+      <a id="navUserBtn" href="/cookie" class="ds-btn-secondary" onclick="playTapAudio()">
+        &#128100; <span id="navUserLabel">LOGIN</span>
+      </a>
     </div>
   </header>
 
@@ -208,6 +211,21 @@
         closeHowToPlay();
       }
     });
+
+    // Check Player Session
+    const savedUser = localStorage.getItem("username");
+    const navUserLabel = document.getElementById("navUserLabel");
+    const navUserBtn = document.getElementById("navUserBtn");
+    if (savedUser) {
+      if (navUserLabel) navUserLabel.textContent = savedUser.toUpperCase();
+      if (navUserBtn) navUserBtn.title = "Jump to Vault & Settings";
+    } else {
+      if (navUserLabel) navUserLabel.textContent = "LOGIN";
+      if (navUserBtn) {
+        navUserBtn.href = "/login";
+        navUserBtn.title = "Player Login";
+      }
+    }
   </script>
 </body>
 </html>
