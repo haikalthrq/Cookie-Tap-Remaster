@@ -4,14 +4,14 @@ Dokumen ini memuat catatan teknis dan analisis komparatif antara versi asli (**u
 
 ---
 
-## 1. Ringkasan Eksekutif & Latar Belakang Perubahan
+## 1. Latar Belakang Perubahan
 
 Versi asli dari proyek ini dirancang khusus untuk platform **Replit** (versi legacy) dengan skema multi-service (dua repl server terpisah). Namun, seiring waktu dan kebutuhan untuk menjalankan proyek secara mandiri di komputer lokal (offline / on-premise):
 1. Domain lama Replit (`https://cookie-1.risalahqz.repl.co` dan `https://cookie-2.risalahqz.repl.co`) sudah nonaktif/mati.
 2. Hardcoded URL pada skrip frontend menyebabkan aplikasi tidak dapat digunakan sama sekali di lingkungan selain Replit asli.
 3. Ketergantungan pada dua server/mesin terpisah menyulitkan pengujian dan *deployment* lokal.
 
-Versi fork ini memodernisasi arsitektur proyek menjadi **Single-Server Standalone Web Application** yang sepenuhnya portabel dan dapat dijalankan di lingkungan lokal mana pun tanpa dependensi eksternal.
+Versi fork ini menyatukan kode menjadi aplikasi web satu server agar dapat langsung dijalankan di komputer lokal (offline) tanpa bergantung ke domain Replit.
 
 ---
 
@@ -112,8 +112,3 @@ Versi fork ini memodernisasi arsitektur proyek menjadi **Single-Server Standalon
    ```
 4. Buka peramban di alamat:
    **[http://localhost:8080](http://localhost:8080)**
-
----
-
-## 5. Kesimpulan
-Dengan perbaikan ini, game **Cookie Tap** yang sebelumnya tidak dapat dimainkan karena *broken external links* dan arsitektur Replit yang usang, kini kembali dapat dimainkan 100% secara offline, stabil, dan mudah untuk dikembangkan lebih lanjut.

@@ -1,4 +1,4 @@
-﻿# Product
+# Product
 
 ## Register
 
@@ -14,28 +14,28 @@ Casual gamers, friends, and competitive players playing in short bursts or susta
 
 ## Product Purpose
 
-Cookie Tap delivers a fast, responsive, and tactile web-based clicker game. It transforms simple tapping into an energetic social battleground through sudden hazard events (thieves stealing cookies), social gifting mechanics, and real-time competitive rankings. Success means players feel immediate physical satisfaction on every tap, clear urgency during hazard events, and pride when seeing their name rise on the leaderboard.
+Cookie Tap is an arcade clicker web game. Players tap a cookie to produce cookies, defend their stash against thieves, send cookies to friends, and compete for high scores on a live leaderboard.
 
 ## Positioning
 
-An energetic, arcade-style competitive clicker game that combines rapid tactile feedback with surprise thief defense and social cookie gifting.
+An arcade clicker game with thief hazards, cookie gifting, and live rankings.
 
 ## Brand Personality
 
-Playful, arcade-retro, and chaotic-fun. The interface feels lively, kinetic, and responsive without devolving into visual noise. It radiates arcade excitement through punchy sound effects, juicy click interactions, and tense hazard moments.
+Arcade-retro and fast-paced. Bold colors, responsive button clicks, and arcade sound effects keep the game active without visual clutter.
 
 ## Anti-references
 
-- Cheap mobile ad-cluttered games with deceptive popups, casino-style spam, and intrusive interstitials.
-- Sterile corporate dashboards with lifeless monochrome tables and cold gray container boxes.
-- Clashing neon-soaked web designs with unreadable, jittery pixel fonts and disorienting sensory overload.
+- Mobile ad clutter: popups, banners, and intrusive interstitials.
+- Corporate dashboards: gray-on-gray containers and dull tables.
+- Sensory overload: unreadable neon gradients and jittery fonts.
 
 ## Design Principles
 
-- Juicy tactile feedback: Every tap, click, and defense action must produce immediate, satisfying visual and auditory confirmation.
-- Clear situational awareness: Game state, cookie counts, thief alerts, and leaderboard standings must be immediately legible at a single glance.
-- Honest, distraction-free play: No misleading dark patterns, intrusive banner spam, or fake urgency; game tension comes purely from authentic game mechanics.
-- Seamless control & comfort: Provide intuitive accessibility, allowing players to easily toggle sound effects, background themes, and reduced-motion states at any time.
+- Immediate feedback: Every tap, click, and defense action gives instant visual and audio response.
+- Clear state: Cookie counts, thief alerts, and leaderboard ranks are visible at a glance.
+- No ads or dark patterns: No popups, banner ads, or artificial timers. Tension comes directly from gameplay.
+- Player comfort: Persistent sound toggles and reduced-motion support.
 
 ## Accessibility & Inclusion
 
