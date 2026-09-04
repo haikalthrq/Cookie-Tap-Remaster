@@ -4,52 +4,34 @@ import threading
 import time
 import database
 
-serverStatus = 1
-
 api = Flask(__name__)
 api.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
 # ---------- Page Routing Below ---------- #
-@api.route("/antiSleep", methods=["GET"])
-def sleepReceive():
-    return "dont sleep"
-
-
 @api.route("/", methods=["GET"])
 def landing_page():
-    global serverStatus
-    if serverStatus == 1:
-        return render_template("index.html")
-    return render_template("error.html")
+    return render_template("index.html")
 
 
 @api.route("/login", methods=["GET"])
 def login_page():
-    if serverStatus == 1:
-        return render_template("login.html")
-    return render_template("error.html")
+    return render_template("login.html")
 
 
 @api.route("/register", methods=["GET"])
 def register_page():
-    if serverStatus == 1:
-        return render_template("register.html")
-    return render_template("error.html")
+    return render_template("register.html")
 
 
 @api.route("/cookie", methods=["GET"])
 def cookie_page():
-    if serverStatus == 1:
-        return render_template("cookie.html")
-    return render_template("error.html")
+    return render_template("cookie.html")
 
 
 @api.route("/leaderboard", methods=["GET"])
 def leaderboard_page():
-    if serverStatus == 1:
-        return render_template("leaderboard.html")
-    return render_template("error.html")
+    return render_template("leaderboard.html")
 
 
 # ---------- API Operations Below ---------- #

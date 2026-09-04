@@ -47,16 +47,16 @@ For a detailed comparison of this version versus the original upstream Replit ve
 ```text
 cookie-tap/
 ├── main.py              # Flask server and route handlers
-├── server2.py           # Legacy secondary server (retained for reference)
-├── database.json        # Player accounts and cookie balances
-├── leaderboard.json     # Sorted leaderboard ranking data
+├── database.py          # SQLite persistence, password hashing, and cache
+├── database.json        # Player accounts and cookie balances (backup)
+├── leaderboard.json     # Sorted leaderboard ranking data (backup)
 ├── requirements.txt     # Python dependencies
 ├── DESIGN.md            # Design system tokens and UI rules
 ├── PRODUCT.md           # Product specification and game mechanics
 ├── PERBEDAAN_VERSI.md   # Upstream vs. fork technical changelog
+├── archive/             # Legacy backups (server2.py, cookie.js, etc.)
 ├── static/
 │   ├── style-cookie.css # Arcade design system stylesheets
-│   ├── cookie.js        # Legacy frontend script
 │   └── assets/          # Sprites, audio files (MP3), and icons
 └── templates/
     ├── index.html       # Landing page

@@ -78,9 +78,9 @@ This fork unifies the codebase into a single-server application that runs locall
 
 ---
 
-### Secondary Server (`server2.py`)
+### Secondary Server (`archive/server2.py`)
 
-- Retained in the repository for historical reference. It does not need to be run. All leaderboard calculations now run inside `main.py`.
+- Moved to `archive/server2.py` for historical reference. It does not need to be run. All leaderboard calculations now run inside `main.py` and `database.py`.
 
 ---
 
