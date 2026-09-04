@@ -1,92 +1,138 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>replit</title>
-  <link href="{{url_for('static', filename='style-cookie.css')}}" rel="stylesheet" type="text/css" />
-  
-  
-    <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
-  </head>
-  <body>
-    <header class="top-bar">
-    <section class="logo">
-      <img class="logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="logo" width="50px" height="40px">
-      <h1 class="logo-title"><a href="https://cookie-1.risalahqz.repl.co">Cookie Tap</a></h1>
-    </section>
-
-   
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hall of Fame Leaderboard | Cookie Tap</title>
+  <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
+  <link rel="stylesheet" href="{{url_for('static', filename='style-leaderboard.css')}}">
+</head>
+<body>
+  <!-- Fixed Arcade Header -->
+  <header class="arcade-header">
+    <div class="header-branding">
+      <img class="header-logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="Cookie Tap Logo">
+      <h1 class="header-title"><a href="/">Cookie Tap</a></h1>
+    </div>
+    <div class="header-actions">
+      <a href="/cookie" class="ds-btn-action" onclick="playBtnAudio()">&#9654; Back to Game</a>
+    </div>
   </header>
-    <main>
-      
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-    <div id="div1">Leaderboard=</div>
 
-    <script>
-      document.getElementById("div1").innerHTML = "loading...";
-      function showLeaderboard(){
- let leaderboard=[];
-  
-const options = {method: 'POST', headers: {'Content-Type': 'application/json'}, body: 'false'};
+  <!-- Leaderboard Main Stage -->
+  <main class="leaderboard-stage">
+    <!-- Top High-Score Marquee Ticker -->
+    <aside class="arcade-ticker-bar" aria-label="Arcade Leaderboard Announcement">
+      <div class="ticker-tag">&#128081; ALL-TIME HIGH SCORE</div>
+      <div id="topPlayerTicker" class="ticker-text">LOADING CHAMPION...</div>
+    </aside>
 
-fetch('https://cookie-2.risalahqz.repl.co/showLeaderboard', options)
-  .then(response => response.json())
-  .then(response => {console.log("dari");leaderboard.push(response);console.log(response,"yey",leaderboard);console.log("berhasil");document.getElementById("div1").innerHTML = "Leaderboard= ";;const element = document.getElementById("div1");let lister=leaderboard;for (let i = 0; i < lister[0].length; i++) {
-      console.log(i,lister[0][i]);
-	let paras = document.createElement("p");
-    let nodes = document.createTextNode(i+1);
-    paras.appendChild(nodes);
-     nodes = document.createTextNode(").   ");
-    paras.appendChild(nodes);
-     nodes = document.createTextNode(lister[0][i][0]);
-    paras.appendChild(nodes);
-     nodes = document.createTextNode("===");
-    paras.appendChild(nodes);
-     nodes = document.createTextNode(lister[0][i][1]);
-    paras.appendChild(nodes);
-    element.appendChild(paras);
-}})
-  .catch(err => {console.log(leaderboard.push([1,4]));console.log(leaderboard);console.error(err);});
-    return leaderboard;
+    <!-- Main Retro Arcade Cabinet Container -->
+    <section class="arcade-cabinet-box" aria-label="Hall of Fame Cabinet">
+      <div class="cabinet-marquee">
+        <span class="arcade-pill">HALL OF FAME</span>
+        <span class="blinking-prompt">&#9733; TOP BAKERS &#9733;</span>
+        <span id="playerCountBadge" class="arcade-pill">PLAYERS: --</span>
+      </div>
+
+      <div class="cabinet-screen">
+        <div class="leaderboard-intro">
+          <h2 class="leaderboard-title">COMMUNITY RANKINGS &#127942;</h2>
+          <div class="refresh-indicator">
+            <span class="refresh-dot"></span>
+            <span>Live auto-syncing</span>
+          </div>
+        </div>
+
+        <div id="rankingsContainer" class="ranking-list" role="list">
+          <div class="loading-notice">&#9203; Fetching high scores from the vault...</div>
+        </div>
+
+        <div class="leaderboard-footer-cta">
+          <a href="/cookie" class="ds-btn-action" onclick="playBtnAudio()">&#9654; PLAY NOW &amp; CLIMB RANKINGS</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const sfxButton = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
+
+    function playBtnAudio() {
+      sfxButton.currentTime = 0;
+      sfxButton.play().catch(() => {});
     }
-  
-       
-  
-  
- //console.log("awwaw",lister);
-  
-                         
-  showLeaderboard();
 
-  
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
 
-    </script>
-<script>
-  
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+    function fetchLeaderboard() {
+      fetch('/showLeaderboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: 'false'
+      })
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("rankingsContainer");
+        const ticker = document.getElementById("topPlayerTicker");
+        const countBadge = document.getElementById("playerCountBadge");
 
-  async function delayedGreeting() {
-    console.log("berjalan");
+        if (!data || data.length === 0) {
+          container.innerHTML = '<div class="loading-notice">No bakers recorded yet. Be the first to tap!</div>';
+          ticker.textContent = "BE THE FIRST TO SET A RECORD!";
+          countBadge.textContent = "PLAYERS: 0";
+          return;
+        }
 
-  let lister=showLeaderboard();
-  
-  console.log("tidak akan",lister);
-    
-  console.log("Goodbye!");
-}
+        countBadge.textContent = "PLAYERS: " + data.length;
 
+        // Update champion ticker
+        const champ = data[0];
+        if (champ) {
+          ticker.textContent = Number(champ[0]).toLocaleString() + " COOKIES • CHAMPION: " + champ[1];
+        }
 
+        container.innerHTML = "";
+        data.forEach((entry, index) => {
+          const cookies = Number(entry[0]);
+          const username = entry[1];
+          const rank = index + 1;
 
+          const item = document.createElement("div");
+          item.className = "ranking-item";
+          if (rank === 1) item.classList.add("rank-1");
+          else if (rank === 2) item.classList.add("rank-2");
+          else if (rank === 3) item.classList.add("rank-3");
 
-  </script>  
-      </main>
-    
-  </body>
+          let rankDisplay = "#" + rank;
+          if (rank === 1) rankDisplay = "&#129351; 1";
+          else if (rank === 2) rankDisplay = "&#129352; 2";
+          else if (rank === 3) rankDisplay = "&#129353; 3";
+
+          item.innerHTML = `
+            <div class="player-info">
+              <span class="player-rank">${rankDisplay}</span>
+              <span class="player-name">${escapeHtml(username)}</span>
+            </div>
+            <span class="player-cookies">${cookies.toLocaleString()} &#127850;</span>
+          `;
+          container.appendChild(item);
+        });
+      })
+      .catch(err => {
+        console.error("Error loading leaderboard:", err);
+        const container = document.getElementById("rankingsContainer");
+        container.innerHTML = '<div class="loading-notice">Unable to reach the vault. Retrying...</div>';
+      });
+    }
+
+    // Initial fetch and 7s auto-sync
+    fetchLeaderboard();
+    setInterval(fetchLeaderboard, 7000);
+  </script>
+</body>
 </html>

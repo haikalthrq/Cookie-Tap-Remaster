@@ -1,202 +1,195 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width" initial-scale="1">
-    <title>Cookie Tap!</title>
-    <link href="{{url_for('static', filename='style-index.css')}}"  rel="stylesheet" type="text/css" />
-    <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
-   <style>
-    .modal-wrapper {
-      background: rgba(0, 0, 0, 0.508);
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      display: none;
-z-index: 2;
-    }
-
-    .modal {
-      font-family: Arial, Helvetica, sans-serif;
-      text-align: center;
-      max-width: 300px;
-      width: 100%;
-      background: wheat;
-      padding: 20px;
-      margin: 35vh auto;
-      border-radius: 5px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .modal a {
-      text-decoration: none;
-      background: crimson;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      margin: 10px;
-      z-index: 2;
-    }
-
-    .modal-close {
-      color: red;
-      border: 1px solid black;
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      cursor: pointer;
-      width: 20px;
-      border-radius: 5px;
-      z-index: 2;
-    }
-
-    
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cookie Tap! | Retro Arcade Clicker Game</title>
+  <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
+  <link rel="stylesheet" href="{{url_for('static', filename='style-index.css')}}">
 </head>
-
 <body>
-  <script>
-    function bt_sound(){
-    var audio = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    audio.loop = false;
-audio.play();}
-  </script>
-    <header class="top-bar">
-        <section class="logo">
-            <img class="logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="logo" width="50px"
-                height="40px">
-            <h1 class="logo-title"><a href="https://cookie-1.risalahqz.repl.co">Cookie Tap</a></h1>
-        </section>
+  <!-- Fixed Arcade Header -->
+  <header class="arcade-header">
+    <div class="header-branding">
+      <img class="header-logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="Cookie Tap Logo">
+      <h1 class="header-title"><a href="/">Cookie Tap</a></h1>
+    </div>
+    <div class="header-actions">
+      <button id="soundToggle" class="ds-btn-secondary" aria-pressed="true" onclick="toggleLobbyAudio()">
+        SOUND: ON
+      </button>
+      <a href="/leaderboard" class="ds-btn-action" onclick="playTapAudio()">Leaderboards</a>
+    </div>
+  </header>
 
-        <section>
-            <nav class="nav">
-                <ul class="nav_links">
-                    <li><button class="ld1" onclick="bt_sound()"><a href="https://cookie-1.risalahqz.repl.co/leaderboard"
-                                >Leaderboards</a></button></li>
-                    <li>
-                        <button class="r1" onclick="bt_sound()"><a href="https://cookie-1.risalahqz.repl.co/register">Register</a>
-                        </button>
-                        |
-                        <button class="l1" onclick="bt_sound()"><a href="https://cookie-1.risalahqz.repl.co/login">Login</a></button>
-                    </li>
-                </ul>
-               <nav class="nav">
-        <ul class="nav_links">
-          <li><button id="lamgu" class="ld1" onclick="lagu()">
-                >sound</a></button>
-          <script>
-            var audios = new Audio("{{url_for('static', filename='assets/lobby_theme.mp3')}}");
-            let mute=0
-        function lagu(){
-          console.log(mute);
-          var audio = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    audio.loop = false;
-audio.play();
-          mute++;
-    if (mute%2!=0){audios.loop = true;
-        audios.muted = false;
-    audios.volume = 0.7;
-          console.log("goyans");document.getElementById("lamgu").innerHTML =">sound";
-audios.play();}else{audios.muted=true;document.getElementById("lamgu").innerHTML ="muted";}}
-    
-        
-  </script>
-          </li>
-       
-        </ul>
-      </nav>
-            </nav>
-        </section>
-    </header>
+  <!-- Arcade Portal Stage -->
+  <main class="arcade-portal">
+    <!-- Top High-Score Marquee Ticker -->
+    <aside class="arcade-ticker-bar" aria-label="Arcade announcements">
+      <div class="ticker-tag">👑 HIGH SCORE</div>
+      <div class="ticker-text">1,789,156 COOKIES &bull; CHAMPION: KENNY YOVIN</div>
+    </aside>
 
-    <main>
-        <section class="title">
-            <h1><span class="welcome">WELCOME</span> TO <span class="cookie">COOKIE</span> TAP!</h1>
-          <br>
-        </section>
-
-        <section class="slogan">
-          <br>
-            <h2>Let our cookies blast in your mouth! </h2>
-        </section>
-
-        <section class="form-button">
-          <br>
-            <form class="login" action="https://cookie-1.risalahqz.repl.co/login">
-                <label class="login-lbl" for="Login">Are you about to make cookie factory in no time? <span
-                        style="color: lime"> LOGIN </span> 
-                     ASAP!</label>
-                <input class="login-bt" type="submit" value="LOGIN NOW" onclick="bt_sound()"/>
-            </form>
-
-            <form class="register" action="https://cookie-1.risalahqz.repl.co/register">
-                <label class="register-lbl" for="Register">Don't have an account, yet? Our buddy <span
-                        style="color: lime"> Tokir </span> will do it for
-                    you!</label>
-                <input class="register-bt" type="submit" value="REGISTER HERE" onclick="bt_sound()"/>
-            </form>
-          <button id="howtoplay" class="login-bt" onclick="displayer()" >HOW TO PLAY</button>
-         
-        </section>
-
-         <div class="modal-wrapper">
-    <div class="modal">
-      <div class="modal-close">X</div>
-      <div class="modal-content">
-        <h2>HOW TO PLAY</h2>
-        <p>1. its very simple, you only have to click the big cookie icon after you logged in, click it as many as
-          possible to get the highest rank<br><br>2. when you get certain cookies, there are possibilities that thief
-          may
-          spawn and want to get your cookie, click them until they dissapear and get arrested!!!<br><br>NOTE: some thief
-          is
-          powerful so they might steal huge amount of cookies or have huge HP, so you might have to click them more than
-          reguler thief in order to arrest them
-        </p>
-
+    <!-- Main Retro Arcade Cabinet Container -->
+    <section class="arcade-cabinet-box" aria-label="Game Cabinet">
+      <div class="cabinet-marquee">
+        <span class="arcade-pill">INSERT COIN</span>
+        <span class="blinking-prompt">&#9733; READY PLAYER ONE &#9733;</span>
+        <span class="arcade-pill">CREDIT: 99</span>
       </div>
+
+      <div class="cabinet-screen">
+        <h1 class="portal-heading">WELCOME TO <span class="cookie-text">COOKIE TAP!</span></h1>
+        <p class="portal-slogan">Let our cookies blast in your mouth! Build the ultimate cookie empire, compete with friends, and protect your vault from sneaky thieves!</p>
+
+        <!-- Interactive Hero Cookie Stage -->
+        <div class="cookie-hero-stage">
+          <div class="cookie-aura"></div>
+          <button class="cookie-preview-btn" id="heroCookieBtn" aria-label="Test tap the giant cookie" onclick="previewTap(event)"></button>
+          <div class="cookie-tap-badge">&#9654; CLICK TO TEST TAP!</div>
+        </div>
+
+        <!-- Game Feature Badges -->
+        <div class="game-feature-ribbon">
+          <span class="feature-tag">&#127918; 1P RETRO ARCADE</span>
+          <span class="feature-tag">&#128373;&#65039; SNEAKY THIEVES</span>
+          <span class="feature-tag">&#127942; LIVE LEADERBOARD</span>
+          <span class="feature-tag">&#127850; COOKIE VAULT</span>
+        </div>
+
+        <!-- Action Button CTAs -->
+        <div class="cta-stack">
+          <a href="/login" class="ds-btn-action" onclick="playTapAudio()">&#9654; LOGIN NOW</a>
+          <a href="/register" class="ds-btn-action" onclick="playTapAudio()">&#9733; REGISTER NEW ACCOUNT</a>
+          <button id="howToPlayBtn" class="ds-btn-secondary" onclick="openHowToPlay()">&#10068; HOW TO PLAY</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- How to Play Modal Dialog -->
+  <div id="howToPlayModal" class="modal-wrapper" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modalTitle" class="modal-title">HOW TO PLAY</h2>
+        <button class="modal-close-btn" aria-label="Close modal" onclick="closeHowToPlay()">&times;</button>
+      </div>
+      <div class="rule-steps">
+        <div class="rule-step">
+          <span class="rule-step-icon">🍪</span>
+          <div>
+            <div class="rule-step-title">1. Tap As Fast As You Can</div>
+            <div class="rule-step-desc">Log in and click the giant cookie to produce cookies, increase your score, and climb the leaderboard rank!</div>
+          </div>
+        </div>
+        <div class="rule-step">
+          <span class="rule-step-icon">🕵️</span>
+          <div>
+            <div class="rule-step-title">2. Catch Sneaky Thieves</div>
+            <div class="rule-step-desc">Thieves will randomly spawn to steal your hard-earned cookies. Click them 3 times or press <kbd>D</kbd> to defeat them before they reach the vault!</div>
+          </div>
+        </div>
+        <div class="rule-step">
+          <span class="rule-step-icon">🎁</span>
+          <div>
+            <div class="rule-step-title">3. Share with Friends</div>
+            <div class="rule-step-desc">Use the Cookie Vault to gift cookies to other players and dominate the community standings together.</div>
+          </div>
+        </div>
+      </div>
+      <button class="ds-btn-action" onclick="closeHowToPlay()">GOT IT, LET'S PLAY!</button>
     </div>
   </div>
-          <script>
-            let modal = document.querySelector('.modal-wrapper');
-let btn = document.getElementById("howtoplay");
-let close_btn = document.querySelector('.modal-close');
 
+  <script>
+    // Audio Management
+    const sfxButton = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
+    const sfxCookieTap = new Audio("{{url_for('static', filename='assets/cookie_tap.mp3')}}");
+    const bgLobbyMusic = new Audio("{{url_for('static', filename='assets/lobby_theme.mp3')}}");
+    bgLobbyMusic.loop = true;
+    bgLobbyMusic.volume = 0.5;
 
+    let isMuted = false;
+    let musicStarted = false;
 
-//  display the modal after 3 second of page load
+    function playTapAudio() {
+      if (!isMuted) {
+        sfxButton.currentTime = 0;
+        sfxButton.play().catch(() => {});
+      }
+    }
 
+    function previewTap(e) {
+      if (!isMuted) {
+        sfxCookieTap.currentTime = 0;
+        sfxCookieTap.play().catch(() => {});
+      }
 
+      // Create floating "+1" arcade particle
+      const stage = document.querySelector('.cookie-hero-stage');
+      if (stage) {
+        const particle = document.createElement('div');
+        particle.className = 'tap-particle';
+        particle.textContent = '+1';
 
-function displayer() {
-  var audio = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    audio.loop = false;
-audio.play();
-  modal.style.display = 'block';
-}
+        const rect = stage.getBoundingClientRect();
+        const clientX = e ? e.clientX : (rect.left + rect.width / 2);
+        const clientY = e ? e.clientY : (rect.top + rect.height / 2);
 
-//  when the user clicks on X button,close the modal
-close_btn.addEventListener('click', hide);
+        particle.style.left = (clientX - rect.left) + 'px';
+        particle.style.top = (clientY - rect.top) + 'px';
 
-// when user clicks anywhere outside the modal, close modal
-window.addEventListener('click', (event) => {
-  if (event.target == modal) {
-    modal.style.display = 'none';
-  }
-});
+        stage.appendChild(particle);
+        setTimeout(() => particle.remove(), 600);
+      }
+    }
 
-function hide() {
-  modal.style.display = 'none';
+    function toggleLobbyAudio() {
+      const btn = document.getElementById("soundToggle");
+      isMuted = !isMuted;
+      if (isMuted) {
+        bgLobbyMusic.pause();
+        btn.textContent = "SOUND: MUTED";
+        btn.setAttribute("aria-pressed", "false");
+        btn.style.backgroundColor = "var(--color-muted)";
+      } else {
+        bgLobbyMusic.play().catch(() => {});
+        btn.textContent = "SOUND: ON";
+        btn.setAttribute("aria-pressed", "true");
+        btn.style.backgroundColor = "var(--color-accent-magenta)";
+      }
+    }
 
-}
+    // Auto-start music on first interaction
+    document.addEventListener("click", function startLobbyMusic() {
+      if (!musicStarted && !isMuted) {
+        bgLobbyMusic.play().then(() => { musicStarted = true; }).catch(() => {});
+      }
+      document.removeEventListener("click", startLobbyMusic);
+    }, { once: true });
 
-        </script>
-        <script></script>
-    </main>
-  
+    // Modal Handling
+    const modal = document.getElementById("howToPlayModal");
+
+    function openHowToPlay() {
+      playTapAudio();
+      modal.style.display = "flex";
+    }
+
+    function closeHowToPlay() {
+      playTapAudio();
+      modal.style.display = "none";
+    }
+
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) closeHowToPlay();
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.style.display === "flex") {
+        closeHowToPlay();
+      }
+    });
+  </script>
 </body>
-
 </html>

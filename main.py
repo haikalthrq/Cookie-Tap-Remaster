@@ -67,23 +67,37 @@ def userFinderLogin(database, name, password):
   return "not found", indeks
 
 
+def sortBoard(data):
+  leaderboard = []
+  for x in data:
+    temp = []
+    temp.append(x["cookie"])
+    temp.append(x["username"])
+    leaderboard.append(temp)
+  leaderboard.sort()
+  leaderboard.reverse()
+  return leaderboard
+
+
+def updateLeaderboard():
+  try:
+    data = loadDatabase()
+    antikaisan(data)
+    save = sortBoard(data["account"])
+    with open(r"leaderboard.json", "w") as database:
+      database.write(json.dumps(save))
+  except Exception as e:
+    print("Leaderboard update error:", e)
+
+
 def sendLeaderboard():
   while True:
-    data = loadDatabase()
-
-    data = antikaisan(data)
     time.sleep(7)
-    print("sendingg leaderboard")
-    url = "https://cookie-2.risalahqz.repl.co"
-
-    #print(data)
-    payload = data["account"]
-    headers = {"Content-Type": "application/json"}
-
-    response = requests.request("POST", url, json=payload, headers=headers)
+    updateLeaderboard()
 
 
 api = Flask(__name__)
+api.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
 #----------website below------------------#
@@ -186,6 +200,8 @@ def send_cookies():
     tempcookie = 50000
   find_user, indeks = userfinder(tempdata, tempname)
   tempdata["account"][indeks]["cookie"] += tempcookie
+  if tempdata["account"][indeks]["cookie"] < 0:
+    tempdata["account"][indeks]["cookie"] = 0
   writeDatabase(tempdata)
   return json.dumps({"respond": "succes"})
 
@@ -234,15 +250,23 @@ def give_cookies():
   return json.dumps({"respond": "failed"})
 
 
-@api.route("/showLeaderboard", methods=["GET"])
+@api.route("/showLeaderboard", methods=["GET", "POST"])
 def showLeaderboard():
-  url = "https://cookie-2.risalahqz.repl.co/showLeaderboard"
-  headers = {"Content-Type": "application/json"}
+  try:
+    with open(r"leaderboard.json", "r") as database:
+      tempdata = json.loads(database.read())
+    return json.dumps(tempdata)
+  except Exception:
+    updateLeaderboard()
+    try:
+      with open(r"leaderboard.json", "r") as database:
+        tempdata = json.loads(database.read())
+      return json.dumps(tempdata)
+    except Exception:
+      return json.dumps([])
 
-  response = requests.request("GET", url, headers=headers)
-  return json.dumps(response.text)
 
-
-t = threading.Thread(target=sendLeaderboard)
-t.start()
-api.run(host="0.0.0.0", port=8080, debug=True)
+if __name__ == "__main__":
+  t = threading.Thread(target=sendLeaderboard, daemon=True)
+  t.start()
+  api.run(host="0.0.0.0", port=8080, debug=False)

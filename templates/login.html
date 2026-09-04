@@ -1,117 +1,121 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Login | Cookie Tap</title>
-  <link href="{{url_for('static', filename='style-log.css')}}" rel="stylesheet" type="text/css" />
   <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
+  <link rel="stylesheet" href="{{url_for('static', filename='style-log.css')}}">
 </head>
-
 <body>
-   <script>
-    function bt_sound(){
-    var audio = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    audio.loop = false;
-audio.play();}
+  <!-- Fixed Arcade Header -->
+  <header class="arcade-header">
+    <div class="header-branding">
+      <img class="header-logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="Cookie Tap Logo">
+      <h1 class="header-title"><a href="/">Cookie Tap</a></h1>
+    </div>
+    <div class="header-actions">
+      <a href="/leaderboard" class="ds-btn-secondary">Leaderboards</a>
+    </div>
+  </header>
+
+  <!-- Centered Auth Stage -->
+  <main class="auth-stage">
+    <section class="arcade-cabinet-box" aria-label="Player Login Cabinet">
+      <div class="cabinet-marquee">
+        <span class="arcade-pill">AUTH TERMINAL</span>
+        <span class="blinking-prompt">&#9733; IDENTIFY PLAYER &#9733;</span>
+        <span class="arcade-pill">1P READY</span>
+      </div>
+
+      <div class="cabinet-screen">
+        <div class="auth-header">
+          <h2 class="auth-title">PLAYER LOGIN</h2>
+          <p class="auth-subtitle">We missed you! Enter your credentials to access your cookie vault.</p>
+        </div>
+
+        <div id="authNotice" class="ds-notice" role="alert"></div>
+
+        <form class="auth-form" id="loginForm" onsubmit="event.preventDefault(); submitLogin();">
+          <div class="ds-field-wrapper">
+            <label class="ds-field-label" for="usernameInput">USERNAME</label>
+            <input id="usernameInput" class="ds-field-input" type="text" placeholder="Enter your username" required autocomplete="username">
+          </div>
+
+          <div class="ds-field-wrapper">
+            <label class="ds-field-label" for="passwordInput">PASSWORD</label>
+            <input id="passwordInput" class="ds-field-input" type="password" placeholder="Enter your password" required autocomplete="current-password">
+          </div>
+
+          <button type="submit" id="submitBtn" class="ds-btn-action">
+            &#9654; LOGIN NOW
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          Don't have an account yet? <a href="/register" class="auth-link" onclick="playBtnAudio()">Register here</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const sfxButton = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
+
+    function playBtnAudio() {
+      sfxButton.currentTime = 0;
+      sfxButton.play().catch(() => {});
+    }
+
+    function submitLogin() {
+      playBtnAudio();
+      const usernameInput = document.getElementById("usernameInput");
+      const passwordInput = document.getElementById("passwordInput");
+      const notice = document.getElementById("authNotice");
+      const submitBtn = document.getElementById("submitBtn");
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!username || !password) {
+        notice.textContent = "Please fill in both username and password.";
+        notice.className = "ds-notice error";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Logging in...";
+
+      const payload = JSON.stringify({ request: [username, password] });
+      fetch('/logins', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+      })
+      .then(res => res.json())
+      .then(data => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "LOGIN NOW";
+        if (data.respond !== "not found") {
+          localStorage.setItem("username", username);
+          localStorage.setItem("password", password);
+          localStorage.setItem("cookies", data.respond);
+          notice.textContent = "Login successful! Entering vault...";
+          notice.className = "ds-notice success";
+          setTimeout(() => location.replace("/cookie"), 400);
+        } else {
+          notice.textContent = "Account not found or password incorrect. Please try again.";
+          notice.className = "ds-notice error";
+        }
+      })
+      .catch(err => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "LOGIN NOW";
+        notice.textContent = "Network error. Please try again.";
+        notice.className = "ds-notice error";
+        console.error(err);
+      });
+    }
   </script>
-    <header class="top-bar">
-        <section class="logo">
-            <img class="logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="logo" width="50px"
-                height="40px">
-            <h1 class="logo-title"><a href="https://cookie-1.risalahqz.repl.co">Cookie Tap</a></h1>
-        </section>
-
-        <section>
-            <nav class="nav">
-                <ul class="nav_links">
-                    <li><button class="ld1" onclick="bt_sound()"><a href="https://cookie-1.risalahqz.repl.co/leaderboard"
-                                >Leaderboards</a></button></li>
-                </ul>
-               <nav class="nav">
-        <ul class="nav_links">
-          <li><button id="lamgu" class="ld1" onclick="lagu()">
-                >sound</a></button>
-          <script>
-           var audios = new Audio("{{url_for('static', filename='assets/lobby_theme.mp3')}}");
-            let mute=0
-        function lagu(){
-          console.log(mute);
-          var audio = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    audio.loop = false;
-audio.play();
-          mute++;
-    if (mute%2!=0){audios.loop = true;
-        audios.muted = false;
-    audios.volume = 0.7;
-          console.log("goyans");document.getElementById("lamgu").innerHTML =">sound";
-audios.play();}else{audios.muted=true;document.getElementById("lamgu").innerHTML ="muted";}}
-    
-        
-  </script>
-          </li>
-       
-        </ul>
-      </nav>
-            </nav>
-        </section>
-    </header>
-
-    <main>
-        <section class="login">
-            <div class="title">LOGIN</div>
-            <div class="sub-title">
-                <p id="demo">We miss you already <3 </p>
-            </div>
-            <form class="login1" id="login1">
-                <div class="uname">
-                    <label for="uname-lbl">USERNAME</label>
-                    <input class="uname-input" type="username" placeholder="Enter your username" value="">
-                </div>
-                <div class="pwd">
-                    <label for="pwd-lbl">PASSWORD</label>
-                    <input class="pwd-input" type="password" placeholder="Enter your password" value="">
-                </div>
-                <button class="submit-bt" id="sumbit" onclick="submits()">LOGIN</button>
-            </form>
-        </section>
-        <script> function submits() {
-  var audio = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    audio.loop = false;
-audio.play();
-  event.preventDefault();
-                var x = document.getElementById("login1");
-                let username = x.elements[0].value;
-                let password = x.elements[1].value;
-
-                let payload = JSON.stringify({ request: [username, password] });
-                console.log((payload), typeof (payload));
-                const options = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: payload
-                };
-
-                let cookies = 0;
-                let tempdata = fetch('https://cookie-1.risalahqz.repl.co/logins', options)
-                    .then(response => response.json())
-                    .then(data => {
-
-                        if (data.respond !== "not found") { location.replace("https://cookie-1.risalahqz.repl.co/cookie"); }
-                        cookies = data.respond;
-                        localStorage.setItem("username", username);
-                        localStorage.setItem("password", password);
-                        localStorage.setItem("cookies", cookies);
-
-                        return data.respond;
-                    }
-                    )
-                    .catch(err => console.error(err));
-            }
-        </script>
-    </main>
 </body>
-
 </html>

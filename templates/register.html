@@ -1,122 +1,130 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
   <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width" initial-scale="1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Register | Cookie Tap</title>
-  <link href="{{url_for('static', filename='style-reg.css')}}" rel="stylesheet" type="text/css" />
-      <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
+  <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
+  <link rel="stylesheet" href="{{url_for('static', filename='style-reg.css')}}">
 </head>
-
 <body>
-    <header class="top-bar">
-        <section class="logo">
-            <img class="logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="logo" width="50px"
-                height="40px">
-            <h1 class="logo-title"><a href="https://cookie-1.risalahqz.repl.co">Cookie Tap</a></h1>
-        </section>
-<script>
-  function bt_sound(){var audio = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    audio.loop = false;
-audio.play();}
-</script>
-        <section>
-            <nav class="nav">
-                <ul class="nav_links">
-                    <li><button class="ld1" onclick="bt_sound()"><a href="https://cookie-1.risalahqz.repl.co/leaderboard" >Leaderboards</a></button></li>
-                </ul>
-               <nav class="nav">
-        <ul class="nav_links">
-          <li><button id="lamgu" class="ld1" onclick="lagu()">
-                >sound</a></button>
-          <script>
-          var audios = new Audio("{{url_for('static', filename='assets/lobby_theme.mp3')}}");
-            let mute=0
-        function lagu(){
-          console.log(mute);
-          var audio = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    audio.loop = false;
-audio.play();
-          mute++;
-    if (mute%2!=0){audios.loop = true;
-        audios.muted = false;
-    audios.volume = 0.7;
-          console.log("goyans");document.getElementById("lamgu").innerHTML =">sound";
-audios.play();}else{audios.muted=true;document.getElementById("lamgu").innerHTML ="muted";}}
-        
-  </script>
-          </li>
-       
-        </ul>
-      </nav>
-            </nav>
-        </section>
-    </header>
+  <!-- Fixed Arcade Header -->
+  <header class="arcade-header">
+    <div class="header-branding">
+      <img class="header-logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="Cookie Tap Logo">
+      <h1 class="header-title"><a href="/">Cookie Tap</a></h1>
+    </div>
+    <div class="header-actions">
+      <a href="/leaderboard" class="ds-btn-secondary">Leaderboards</a>
+    </div>
+  </header>
 
-    <main>
-        <section class="register">
-            <div class="title">REGISTER</div>
-            <div class="sub-title"><p id="demo">Can't wait to see your action!</p></div>
-            <form class="register1" id="register1">
-                <div class="uname">
-                    <label for="uname-lbl">USERNAME</label>
-                    <input class="uname-input" type="username" placeholder="Enter your username" value="">
-                </div>
-                <div class="pwd">
-                    <label for="pwd-lbl">PASSWORD</label>
-                    <input class="pwd-input" type="password" placeholder="Enter your password" value="">
-                  <button class="submit-bt" id="sumbit" onclick="submits()" >Register Now</button>
-                  </form>
-                    
-                </div>
-            
-        
+  <!-- Centered Auth Stage -->
+  <main class="auth-stage">
+    <section class="arcade-cabinet-box" aria-label="Player Registration Cabinet">
+      <div class="cabinet-marquee">
+        <span class="arcade-pill">NEW PLAYER</span>
+        <span class="blinking-prompt">&#9733; CREATE PROFILE &#9733;</span>
+        <span class="arcade-pill">PRESS START</span>
+      </div>
 
-        <!-- <form id="register1">
-            username: <br>
-            password: <input type="password" value=""><br>
+      <div class="cabinet-screen">
+        <div class="auth-header">
+          <h2 class="auth-title">PLAYER REGISTRATION</h2>
+          <p class="auth-subtitle">Create your baker profile and start your cookie empire journey!</p>
+        </div>
+
+        <div id="authNotice" class="ds-notice" role="alert"></div>
+
+        <form class="auth-form" id="regForm" onsubmit="event.preventDefault(); submitRegister();">
+          <div class="ds-field-wrapper">
+            <label class="ds-field-label" for="usernameInput">USERNAME (MAX 15 CHARS)</label>
+            <input id="usernameInput" class="ds-field-input" type="text" maxlength="15" placeholder="Choose a player username" required autocomplete="username">
+          </div>
+
+          <div class="ds-field-wrapper">
+            <label class="ds-field-label" for="passwordInput">PASSWORD (MAX 15 CHARS)</label>
+            <input id="passwordInput" class="ds-field-input" type="password" maxlength="15" placeholder="Choose a password" required autocomplete="new-password">
+          </div>
+
+          <button type="submit" id="submitBtn" class="ds-btn-action">
+            &#9654; REGISTER ACCOUNT
+          </button>
         </form>
-        <p id="demo"></p>
-        <button id="submit" onclick="submits()">Register Now!</button>
-        <button id="login" onclick="location.replace('https://serverCookie.colabbren.repl.co/login')">LOGIN</button> -->
 
-        <script>
-          //function stopRefresh(event) { event.preventDefault(); } 
-            function submits() {
-              var audio = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    audio.loop = false;
-audio.play();
-              event.preventDefault();
-              
-                var x = document.getElementById("register1");
-            //  x.addEventListener('submit', stopRefresh);
-                let username = x.elements[0].value;
-                let password = x.elements[1].value;
-                if( username==="" && password===""){document.getElementById("demo").innerHTML = "form cant be a blank identity"; return 0;}
-                if (username.length>15 || password.length>15){document.getElementById("demo").innerHTML = "character length to >15"; return 0;}
-                let payload = JSON.stringify({ request: [username, password] });
-                console.log((payload), typeof (payload));
-                const options = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: payload
-                };
-
-                fetch('https://cookie-1.risalahqz.repl.co/registers', options)
-                    .then(response => response.json())
-                    .then(response => {
-                        if (response.respond === "existed") {
-                            document.getElementById("demo").innerHTML = "The account already existed.";
-                        } else {
-                            document.getElementById("demo").innerHTML = "Register succeed, login to play!";alert('Please login to play, redirecting to home page.');location.href = "https://cookie-1.risalahqz.repl.co";
-                        }
-                    })
-                    .catch(err => console.error(err));
-               }
-        </script>
+        <div class="auth-footer">
+          Already have an account? <a href="/login" class="auth-link" onclick="playBtnAudio()">Login here</a>
+        </div>
+      </div>
     </section>
-    </main>
-</body>
+  </main>
 
+  <script>
+    const sfxButton = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
+
+    function playBtnAudio() {
+      sfxButton.currentTime = 0;
+      sfxButton.play().catch(() => {});
+    }
+
+    function submitRegister() {
+      playBtnAudio();
+      const usernameInput = document.getElementById("usernameInput");
+      const passwordInput = document.getElementById("passwordInput");
+      const notice = document.getElementById("authNotice");
+      const submitBtn = document.getElementById("submitBtn");
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!username || !password) {
+        notice.textContent = "Please fill in both fields.";
+        notice.className = "ds-notice error";
+        return;
+      }
+
+      if (username.length > 15 || password.length > 15) {
+        notice.textContent = "Username and password must not exceed 15 characters.";
+        notice.className = "ds-notice error";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Registering...";
+
+      const payload = JSON.stringify({ request: [username, password] });
+      fetch('/registers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+      })
+      .then(res => res.json())
+      .then(data => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "REGISTER ACCOUNT";
+        if (data.respond === "succes") {
+          localStorage.setItem("username", username);
+          localStorage.setItem("password", password);
+          localStorage.setItem("cookies", 0);
+          notice.textContent = "Account created successfully! Entering cookie arena...";
+          notice.className = "ds-notice success";
+          setTimeout(() => location.replace("/cookie"), 400);
+        } else if (data.respond === "existed") {
+          notice.textContent = "Username already taken! Please choose another name.";
+          notice.className = "ds-notice error";
+        } else {
+          notice.textContent = "Registration failed. Please try again.";
+          notice.className = "ds-notice error";
+        }
+      })
+      .catch(err => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "REGISTER ACCOUNT";
+        notice.textContent = "Network error. Please try again.";
+        notice.className = "ds-notice error";
+        console.error(err);
+      });
+    }
+  </script>
+</body>
 </html>

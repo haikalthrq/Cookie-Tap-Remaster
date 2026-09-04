@@ -1,380 +1,615 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>replit</title>
-  <link href="{{url_for('static', filename='style-cookie.css')}}" rel="stylesheet" type="text/css" />
-  
-  
-    <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
-  <script src="{{url_for('static', filename='cookie.js')}}" ></script>
-  <script>let tapcookie=0;</script>
-  <style>p.groove {background-color:red;background-size: auto; }
-  fieldset {
-  border: 1px solid blue;
-  color: black;
-  text-align: center;
-  width: 200px;
-    padding-left: 10px;
-}
-legend {
-  padding:  10px;
-}</style>
-
-
-<style>
-    
-  </style>
-
-<style>.text {
-      padding-left: 10px;
-    }</style>
-
-
-
-
-
-
-
-
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cookie Tap! | Arcade Clicker Game</title>
+  <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
+  <link rel="stylesheet" href="{{url_for('static', filename='style-cookie.css')}}">
 </head>
-
 <body>
-  <header class="top-bar">
-    <section class="logo">
-      <img class="logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="logo" width="50px" height="40px">
-      <h1 class="logo-title"><a href="https://cookie-1.risalahqz.repl.co">Cookie Tap</a></h1>
-    </section>
-
-    <section>
-      <nav class="nav">
-        <ul class="nav_links">
-          <li><button class="ld1"><a href="https://cookie-1.risalahqz.repl.co/leaderboard"
-                >Leaderboards</a></button></li>
-       
-        </ul>
-         <nav class="nav">
-        <ul class="nav_links">
-          <li><button id="lamgu" class="ld1" onclick="lagu()">
-                >sound</a></button>
-          <script>
-            var audios = new Audio("{{url_for('static', filename='assets/cookie_theme.mp3')}}");
-            let mute=0
-        function lagu(){
-          console.log(mute);
-          var audio = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    audio.loop = false;
-audio.play();
-          mute++;
-    if (mute%2!=0){audios.loop = true;
-        audios.muted = false;
-    audios.volume = 0.7;
-          console.log("goyans");document.getElementById("lamgu").innerHTML =">sound";
-audios.play();}else{audios.muted=true;document.getElementById("lamgu").innerHTML ="muted";}}
-        
-  </script>
-          </li>
-       
-        </ul>
-      </nav>
-      </nav>
-      
-    </section>
-<!--    <section>
-      <nav class="nav">
-        <ul class="nav_links">
-          <li><button class="ld1" onclick="lagu()">
-                >sound</a></button>
-          <script>
-        function lagu(){
-    var audios = new Audio("{{url_for('static', filename='assets/kemalingan.mp3')}}");
-    audios.loop = true;
-        audios.muted = false;
-    //audios.volume = 0.4;
-          console.log("goyans");
-audios.play();}
-        
-  </script>
-          </li>
-       
-        </ul>
-      </nav>
-    </section> -->
+  <!-- Fixed Arcade Header -->
+  <header class="arcade-header">
+    <div class="header-branding">
+      <img class="header-logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="Cookie Tap Logo">
+      <h1 class="header-title"><a href="/">Cookie Tap</a></h1>
+    </div>
+    <div class="header-actions">
+      <button id="soundToggle" class="ds-btn-secondary" aria-pressed="true" onclick="toggleAudio()">
+        SOUND: ON
+      </button>
+      <a href="/leaderboard" class="ds-btn-action" onclick="playBtnAudio()">&#127942; Leaderboards</a>
+    </div>
   </header>
- <main >
- 
- 
-  
-  <button  class="cookiebutton" alt="logo" id="cookieTap" onclick="taptap()" >Tap me</button><br>
- <!-- <button id="show" onclick="showMyCookie()">show my cookies</button>
-   
-  --><br>
-   <br>
-   <br>
-   <br>
-   <p class="text">  tap as much as you can and beat your friend<br>  "well i mean in leaderboard rank ofcurse"</p>
-   <br>
-   <fieldset >
-  <legend >my cookies &#127850;</legend>
-  <p id="showCookies"></p>
-</fieldset>
-  
-  <br>
-  
-  <br>
-  <p class="text">  wanna share your cookies to other person? type the name and amount of the cookies</p>
-  <form id="giveCookies" class="text" >
-  username: <input type="text"  value=""><br>
-  amount: <input type="number" id="quantity" name="quantity" min="0" max="5000000">><br> 
-</form>
-<p id="info"></p>
 
-  <button id="giveCookie" class="login-bt" onclick="giveCookies()">give cookies</button>
+  <!-- Central Arcade Main Stage -->
+  <main class="arcade-stage">
+    <!-- Top Player Status Ticker -->
+    <aside class="arcade-ticker-bar" aria-label="Player session stats">
+      <div class="ticker-tag">
+        <span class="ticker-icon">&#127918;</span>
+        <span class="ticker-label">PLAYER:</span>
+        <span id="playerBadge" class="ticker-badge">GUEST</span>
+      </div>
+      <div class="ticker-text">TAP TO BAKE &bull; CATCH SNEAKY THIEVES!</div>
+    </aside>
 
-  <script > function giveCookies() {
-  var x = document.getElementById("giveCookies");
-  let targetname=x.elements[0].value;
-  let quantity=x.elements[1].value;
-  var audio = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-    audio.loop = false;
-audio.play();
-  
-  let payload=JSON.stringify({request:[username,quantity,targetname]});
-  console.log((payload),typeof(payload));
-  const options = {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: payload
-};
+    <!-- Thief Hazard Alert Banner -->
+    <div id="thiefBanner" class="thief-alert-banner" role="alert" aria-live="assertive">
+      <div class="thief-alert-title">&#9888;&#65039; THIEF INVASION! &#9888;&#65039;</div>
+      <div class="thief-alert-hint">A thief is stealing cookies! Click it 3 times or press <kbd>D</kbd> to defend!</div>
+    </div>
 
+    <!-- Main Arcade Cabinet Centerpiece -->
+    <section class="arcade-cabinet-box" aria-label="Arcade Cookie Cabinet">
+      <div class="cabinet-marquee">
+        <span class="arcade-pill">1P ARCADE</span>
+        <span class="blinking-prompt">&#9733; COOKIE TAP MACHINE &#9733;</span>
+        <span id="cabinetStatusPill" class="arcade-pill">DEFENSE: SECURE</span>
+      </div>
 
+      <div class="cabinet-screen">
+        <!-- Arcade HUD Scoreboard -->
+        <div class="arcade-hud-board" aria-label="Cookie Scoreboard">
+          <div class="score-display-row">
+            <span id="showCookies" class="cookie-counter-number">0</span>
+            <span class="cookie-counter-unit">COOKIES</span>
+          </div>
+          <div class="hud-stats-row">
+            <div class="hud-stat-chip">
+              <span>&#9889; COMBO:</span>
+              <span id="comboBadge" class="combo-badge">x1</span>
+            </div>
+            <div class="hud-stat-chip">
+              <span>&#128293; TAPS:</span>
+              <span id="tapCountDisplay">0</span>
+            </div>
+            <div class="hud-stat-chip">
+              <span>&#128737;&#65039; STATUS:</span>
+              <span id="vaultStatusText" style="color: var(--color-accent-green);">ONLINE</span>
+            </div>
+          </div>
+        </div>
 
-    let cookies=0;
-    let tempdata=fetch('https://cookie-1.risalahqz.repl.co/giveCookies', options)
-  .then(response => response.json())
-  .then(data => {
-    
-    
-    
-    if(data.respond[0]==="succes"){document.getElementById("info").innerHTML = "cookies sent, its deliciouss";document.getElementById("showCookies").innerHTML = 
-    data.respond[1]  ;cacheShowMyCookie=data.respond[1];}else{document.getElementById("info").innerHTML = "failed, perhaps the person is not here yet, or u dont have enough cookie to share :(. keep grinding!! &)";}}
-       )
-  
-  
-  .catch(err => console.error(err));
-                         
-  
-}
-  </script>
+        <!-- Giant Cookie Tap Arena -->
+        <div class="cookie-arena" aria-label="Cookie Tap Game Arena">
+          <div class="cookie-aura"></div>
+          <button id="cookieTap" class="cookie-target" aria-label="Tap to bake cookies" onclick="taptap(event)">
+            <span class="cookie-badge">&#9654; TAP ME!</span>
+          </button>
+          <p class="cookie-hint">Tap rapidly to build combos or press <kbd>Space</kbd> on keyboard.</p>
+        </div>
+      </div>
+    </section>
 
+    <!-- Lower Arcade Control Deck -->
+    <div class="arcade-deck-row">
+      <!-- Cookie Vault Panel -->
+      <section class="ds-panel" aria-label="Cookie Vault Statistics">
+        <header class="panel-header">
+          <h2 class="panel-title">My Cookie Vault &#127850;</h2>
+          <div id="syncBadge" class="sync-badge">
+            <span id="syncDot" class="sync-dot"></span>
+            <span id="syncStatus">Synced</span>
+          </div>
+        </header>
+        <p style="font-size: var(--font-size-label); color: var(--color-muted); line-height: 1.4;">
+          Your baked cookies are securely banked in your personal vault. Taps auto-sync every 5s with the server.
+        </p>
+        <div id="guestWarning" style="display: none; background: var(--color-bg); padding: 8px 12px; border-radius: var(--radius-md); border: 1.5px solid var(--color-accent-magenta); font-size: var(--font-size-label); color: var(--color-cabinet-navy);">
+          &#9888; You are playing as Guest. <a href="/login" style="color: var(--color-primary); font-weight: 700; text-decoration: underline;">Login here</a> to compete on the global leaderboard!
+        </div>
+      </section>
 
+      <!-- Social Gifting Console -->
+      <section class="ds-panel" aria-label="Cookie Gifting Transfer">
+        <header class="panel-header">
+          <h2 class="panel-title">Gift to Friend &#127873;</h2>
+        </header>
+        <form id="giveCookiesForm" class="ds-form" onsubmit="event.preventDefault(); submitGiveCookies();">
+          <div class="ds-field-wrapper">
+            <label class="ds-field-label" for="targetUsername">Friend's Username</label>
+            <input id="targetUsername" class="ds-field-input" type="text" placeholder="Recipient username" required autocomplete="off">
+          </div>
 
+          <div class="ds-field-wrapper">
+            <label class="ds-field-label" for="giftQuantity">Amount</label>
+            <input id="giftQuantity" class="ds-field-input" type="number" min="1" max="5000000" placeholder="e.g. 100" required>
+            <div class="chip-row">
+              <button type="button" class="ds-chip" onclick="setGiftAmount(10)">+10</button>
+              <button type="button" class="ds-chip" onclick="setGiftAmount(100)">+100</button>
+              <button type="button" class="ds-chip" onclick="setGiftAmount(500)">+500</button>
+              <button type="button" class="ds-chip" onclick="setGiftMax()">MAX</button>
+            </div>
+          </div>
 
- 
-   <div id="myObjects"></div>
-<style>
-    
-  </style>
-   <script>
- function thief(){
-   console.log("thief uga nyala");
-   let HP=3;
-   var audio = new Audio("{{url_for('static', filename='assets/maling_spawn.mp3')}}");
-    audio.loop = false;
-audio.play();
-    var object = document.getElementById('myObjects');
-    var maxX = window.innerWidth - object.offsetWidth;
-    var maxY = window.innerHeight - object.offsetHeight;
-    var clickCount = 0;
+          <button type="submit" id="giveCookieBtn" class="ds-btn-action">
+            &#9654; Send Cookies Now
+          </button>
+          <div id="giftNotice" class="ds-notice" role="status"></div>
+        </form>
+      </section>
+    </div>
 
-    function createObject() {
-      var object = document.createElement('div');
-        let img = document.createElement("img");
-        object.id = "myObject";
-        img.src = "{{url_for('static', filename='assets/thief.png')}}";
-        img.height = "100";
-        img.width = 100;
-        object.appendChild(img);
-        document.body.appendChild(object);
-      
-
-      object.addEventListener('click', handleClick);
-
-      function handleClick() {
-        clickCount++;
-        var audio = new Audio("{{url_for('static', filename='assets/maling_hit.mp3')}}");
-    audio.loop = false;
-audio.play();
-        if (clickCount >= HP) {
-          var audio = new Audio("{{url_for('static', filename='assets/maling_mati.mp3')}}");
-    audio.loop = false;
-audio.play();
-          hideObject();
-        }
-      }
-
-      function hideObject() {
-        
-        object.style.display = 'none';
-        
-      }
-
-      moveObject();
-
-      function moveObject() {
-        if (clickCount >= HP) {
-          return; // Stop moving when clicked three times
-        }
-
-        var startX = Math.floor(Math.random() * maxX / 2 + 500);
-        var startY = Math.floor(Math.random() * maxY / 2 + 200);
-        var endX = 70;
-        var endY = 220;
-        var duration = 1000; // Transition duration in milliseconds
-
-        object.style.left = startX + 'px';
-        object.style.top = startY + 'px';
-
-        // Move towards the coordinate (0, 0)
-        var dx = (endX - startX) / duration; // Calculate the distance to move in each frame
-        var dy = (endY - startY) / duration;
-        var frameRate = 10; // Number of frames per second
-        var interval = Math.floor(Math.random() * 20) + 5 / frameRate; // Interval between each frame in milliseconds
-
-        var timer = setInterval(function () {
-          startX += dx;
-          startY += dy;
-
-          object.style.left = startX + 'px';
-          object.style.top = startY + 'px';
-function thiefsucces(){
-  let thiefcookie=-10;
-  var audio = new Audio("{{url_for('static', filename='assets/kemalingan.mp3')}}");
-    audio.loop = false;
-audio.play();
-  let payload=JSON.stringify({request:[username,password,thiefcookie]});
-  console.log((payload),typeof(payload));
-  const options = {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: payload
-};
-    let cookies=0;
-    fetch('https://cookie-1.risalahqz.repl.co/sendCookies', options)
-  .then(response => response.json())
-  .then(data => {console.log("thief succes");
-    
-  
-    
-    }
-       )
-  
-  
-  .catch(err => console.error(err));
-}
-          // Check if the object has reached the coordinate (0, 0)
-          if (startX <= endX && startY <= endY) {
-            if (clickCount<HP){thiefsucces();console.log("thief failed yes");}
-            
-            clearInterval(timer);
-            moveObject(); // Start the next movement
-          }
-        }, interval);
-      }
-    }
-
-    // Spawn object at random position initially
-    createObject();
-    }
-     
-     
-function showMyCookie(){
-let payload=JSON.stringify({request:[username,password]});
-  console.log((payload),typeof(payload));
-  const options = {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: payload
-};
-
-
-
-    
-    fetch('https://cookie-1.risalahqz.repl.co/showCookies', options)
-  .then(response => response.json())
-  .then(data => {cacheShowMyCookie=data.respond;console.log(cacheShowMyCookie,"response");document.getElementById("showCookies").innerHTML = cacheShowMyCookie;function randomThief(){let random=Math.random()*10;console.log("aku nyala ",random);if(random>7){thief()}};
-     
-     if(cacheShowMyCookie>40){var timeout = setTimeout(function(){randomThief()},3000);}console.log("gk nyala",cacheShowMyCookie);})
-    .catch(err => console.error(err));
-
-    
-    }
-  
-       
-  
-  
-  
-                         
-  
-
-
-
-
-
-  
-</script>
-   <script>showMyCookie();console.log("debug send");</script>
- <script>console.log("debug show",cacheShowMyCookie);</script>
-  <script  >
-    
-    function taptap(){
-      tapcookie+=1;
-      cacheShowMyCookie+=1;
-      document.getElementById("showCookies").innerHTML = cacheShowMyCookie;
-      var audio = new Audio("{{url_for('static', filename='assets/cookie_tap.mp3')}}");
-    audio.loop = false;
-audio.play();
-    }
-  </script>
-
-   
- <script>
-   
-   async function sendCookie() {
-  
-  
-  
-  let payload=JSON.stringify({request:[username,password,tapcookie]});
-  console.log((payload),typeof(payload));
-  const options = {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: payload
-};
-    let cookies=0;
-    fetch('https://cookie-1.risalahqz.repl.co/sendCookies', options)
-  .then(response => response.json())
-  .then(data => {console.log("send succes",tapcookie);showMyCookie();
-    
-  tapcookie=0;
-    
-    }
-       )
-  
-  
-  .catch(err => console.error(err));
-
-
-}
-   setInterval(sendCookie, 5000);
-  
- </script>
-   
+    <!-- Moving Thief Layer -->
+    <div id="myObjects" aria-hidden="true"></div>
   </main>
-  
-</body>
 
+  <script src="{{url_for('static', filename='cookie.js')}}"></script>
+  <script>
+    // Audio Pooling & Sound Management
+    const sfxTap = [
+      new Audio("{{url_for('static', filename='assets/cookie_tap.mp3')}}"),
+      new Audio("{{url_for('static', filename='assets/cookie_tap.mp3')}}"),
+      new Audio("{{url_for('static', filename='assets/cookie_tap.mp3')}}")
+    ];
+    let tapAudioIdx = 0;
+    function playTapSound() {
+      if (isMuted) return;
+      sfxTap[tapAudioIdx].currentTime = 0;
+      sfxTap[tapAudioIdx].play().catch(() => {});
+      tapAudioIdx = (tapAudioIdx + 1) % sfxTap.length;
+    }
+
+    const sfxButton = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
+    const sfxMalingSpawn = new Audio("{{url_for('static', filename='assets/maling_spawn.mp3')}}");
+    const sfxMalingHit = new Audio("{{url_for('static', filename='assets/maling_hit.mp3')}}");
+    const sfxMalingMati = new Audio("{{url_for('static', filename='assets/maling_mati.mp3')}}");
+    const sfxKemalingan = new Audio("{{url_for('static', filename='assets/kemalingan.mp3')}}");
+    const bgMusic = new Audio("{{url_for('static', filename='assets/cookie_theme.mp3')}}");
+    bgMusic.loop = true;
+    bgMusic.volume = 0.5;
+
+    let isMuted = false;
+    let bgMusicStarted = false;
+
+    function playBtnAudio() {
+      if (!isMuted) {
+        sfxButton.currentTime = 0;
+        sfxButton.play().catch(() => {});
+      }
+    }
+
+    function toggleAudio() {
+      const btn = document.getElementById("soundToggle");
+      isMuted = !isMuted;
+      if (isMuted) {
+        bgMusic.pause();
+        btn.textContent = "SOUND: MUTED";
+        btn.setAttribute("aria-pressed", "false");
+        btn.style.backgroundColor = "var(--color-muted)";
+      } else {
+        bgMusic.play().catch(() => {});
+        btn.textContent = "SOUND: ON";
+        btn.setAttribute("aria-pressed", "true");
+        btn.style.backgroundColor = "var(--color-accent-magenta)";
+      }
+    }
+
+    // Auto-start BGM on first user interaction
+    document.addEventListener("click", function startBGMOnFirstClick() {
+      if (!bgMusicStarted && !isMuted) {
+        bgMusic.play().then(() => { bgMusicStarted = true; }).catch(() => {});
+      }
+      document.removeEventListener("click", startBGMOnFirstClick);
+    }, { once: true });
+
+    // Initialize User & Player Tag
+    const currentUser = (typeof username !== "undefined" && username) ? username : localStorage.getItem("username");
+    const currentPass = (typeof password !== "undefined" && password) ? password : localStorage.getItem("password");
+
+    const playerBadge = document.getElementById("playerBadge");
+    const guestWarning = document.getElementById("guestWarning");
+
+    if (currentUser) {
+      playerBadge.textContent = currentUser.toUpperCase();
+    } else {
+      playerBadge.textContent = "GUEST";
+      if (guestWarning) guestWarning.style.display = "block";
+    }
+
+    // Tap Handling, Combo System & Particles
+    let tapcookie = 0;
+    let totalTaps = 0;
+    let combo = 1;
+    let comboTimer = null;
+    const comboBadge = document.getElementById("comboBadge");
+    const tapCountDisplay = document.getElementById("tapCountDisplay");
+
+    function taptap(event) {
+      totalTaps++;
+      if (tapCountDisplay) tapCountDisplay.textContent = totalTaps.toLocaleString();
+
+      // Combo Accumulation
+      combo = Math.min(10, combo + 0.2);
+      const roundedCombo = Math.floor(combo);
+      if (comboBadge) {
+        comboBadge.textContent = "x" + roundedCombo;
+        if (roundedCombo > 1) {
+          comboBadge.classList.add("active");
+        }
+      }
+
+      clearTimeout(comboTimer);
+      comboTimer = setTimeout(() => {
+        combo = 1;
+        if (comboBadge) {
+          comboBadge.textContent = "x1";
+          comboBadge.classList.remove("active");
+        }
+      }, 1800);
+
+      // Add to cookies
+      const earned = roundedCombo;
+      tapcookie += earned;
+      cacheShowMyCookie = (cacheShowMyCookie || 0) + earned;
+      document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
+      localStorage.setItem("cookies", cacheShowMyCookie);
+
+      playTapSound();
+
+      // Spawn particle at click coordinate
+      let x = window.innerWidth / 2;
+      let y = window.innerHeight / 2;
+      if (event && event.clientX) {
+        x = event.clientX;
+        y = event.clientY;
+      }
+      spawnParticle(x, y, earned > 1 ? "+" + earned + " COMBO!" : "+1");
+    }
+
+    function spawnParticle(x, y, text, isNegative = false) {
+      const particle = document.createElement("span");
+      particle.className = "tap-particle" + (isNegative ? " negative" : "");
+      particle.textContent = text || "+1";
+      particle.style.left = (x - 20) + "px";
+      particle.style.top = (y - 30) + "px";
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 700);
+    }
+
+    // Fetch My Cookies & Server Sync
+    function showMyCookie() {
+      if (!currentUser) {
+        const localSaved = parseInt(localStorage.getItem("cookies")) || 0;
+        cacheShowMyCookie = localSaved;
+        document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
+        return;
+      }
+
+      const payload = JSON.stringify({ request: [currentUser, currentPass] });
+      fetch('/showCookies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.respond !== "not found") {
+          cacheShowMyCookie = parseInt(data.respond) || 0;
+          document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
+          localStorage.setItem("cookies", cacheShowMyCookie);
+          
+          // Random Thief Trigger
+          if (cacheShowMyCookie > 40 && !isThiefActive) {
+            if (Math.random() * 10 > 7) {
+              setTimeout(thief, 2500);
+            }
+          }
+        }
+      })
+      .catch(err => console.error("Error fetching cookies:", err));
+    }
+
+    // Periodic Background Sync every 5s
+    function sendCookie() {
+      if (tapcookie === 0 || !currentUser) return;
+      const syncDot = document.getElementById("syncDot");
+      const syncStatus = document.getElementById("syncStatus");
+      if (syncDot) syncDot.classList.add("syncing");
+      if (syncStatus) syncStatus.textContent = "Syncing...";
+
+      const currentTaps = tapcookie;
+      const payload = JSON.stringify({ request: [currentUser, currentPass, currentTaps] });
+      
+      fetch('/sendCookies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+      })
+      .then(res => res.json())
+      .then(() => {
+        tapcookie -= currentTaps;
+        showMyCookie();
+        if (syncDot) syncDot.classList.remove("syncing");
+        if (syncStatus) syncStatus.textContent = "Synced";
+      })
+      .catch(err => {
+        console.error("Sync error:", err);
+        if (syncDot) syncDot.classList.remove("syncing");
+        if (syncStatus) syncStatus.textContent = "Offline";
+      });
+    }
+    setInterval(sendCookie, 5000);
+
+    // Social Gifting Quick Chips & Submission
+    function setGiftAmount(amount) {
+      const input = document.getElementById("giftQuantity");
+      input.value = (parseInt(input.value || 0) + amount);
+    }
+
+    function setGiftMax() {
+      const input = document.getElementById("giftQuantity");
+      input.value = Math.max(0, cacheShowMyCookie);
+    }
+
+    function submitGiveCookies() {
+      if (!currentUser) {
+        showGiftNotice("Please log in to transfer cookies to other players.", "error");
+        return;
+      }
+
+      const targetInput = document.getElementById("targetUsername");
+      const quantityInput = document.getElementById("giftQuantity");
+
+      const targetname = targetInput.value.trim();
+      const quantity = parseInt(quantityInput.value);
+
+      if (!targetname) {
+        showGiftNotice("Please enter a valid friend's username.", "error");
+        return;
+      }
+      if (isNaN(quantity) || quantity <= 0) {
+        showGiftNotice("Please enter a positive cookie amount to send.", "error");
+        return;
+      }
+      if (quantity > cacheShowMyCookie) {
+        showGiftNotice("You only have " + cacheShowMyCookie + " cookies to share. Keep tapping!", "error");
+        return;
+      }
+
+      playBtnAudio();
+
+      const payload = JSON.stringify({ request: [currentUser, quantity, targetname] });
+      const submitBtn = document.getElementById("giveCookieBtn");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
+
+      fetch('/giveCookies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+      })
+      .then(res => res.json())
+      .then(data => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Send Cookies Now";
+        if (data.respond && data.respond[0] === "succes") {
+          showGiftNotice("Successfully sent " + quantity + " cookies to " + targetname + "! 🍪", "success");
+          cacheShowMyCookie = data.respond[1];
+          document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
+          targetInput.value = "";
+          quantityInput.value = "";
+        } else {
+          showGiftNotice("Transfer failed: Recipient was not found, or balance was insufficient.", "error");
+        }
+      })
+      .catch(err => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Send Cookies Now";
+        showGiftNotice("Network error during transfer. Please try again.", "error");
+        console.error(err);
+      });
+    }
+
+    function showGiftNotice(msg, type) {
+      const notice = document.getElementById("giftNotice");
+      notice.textContent = msg;
+      notice.className = "ds-notice " + type;
+      setTimeout(() => {
+        if (type === "success") notice.className = "ds-notice";
+      }, 5000);
+    }
+
+    // Interactive Thief Hazard Event
+    let isThiefActive = false;
+    let activeThiefDefendFn = null;
+
+    function thief() {
+      if (isThiefActive) return;
+      isThiefActive = true;
+
+      const thiefBanner = document.getElementById("thiefBanner");
+      const statusPill = document.getElementById("cabinetStatusPill");
+      if (thiefBanner) thiefBanner.classList.add("active");
+      if (statusPill) {
+        statusPill.textContent = "⚠️ INVASION!";
+        statusPill.style.backgroundColor = "var(--color-accent-magenta)";
+      }
+
+      if (!isMuted) {
+        sfxMalingSpawn.currentTime = 0;
+        sfxMalingSpawn.play().catch(() => {});
+      }
+
+      const container = document.getElementById("myObjects");
+      const thiefEl = document.createElement("div");
+      thiefEl.className = "thief-sprite-container";
+
+      // Health bar pips
+      const healthBar = document.createElement("div");
+      healthBar.className = "thief-health-bar";
+      const pips = [];
+      for (let i = 0; i < 3; i++) {
+        const pip = document.createElement("span");
+        pip.className = "thief-health-pip";
+        healthBar.appendChild(pip);
+        pips.push(pip);
+      }
+      thiefEl.appendChild(healthBar);
+
+      const img = document.createElement("img");
+      img.className = "thief-sprite-img";
+      img.src = "{{url_for('static', filename='assets/thief.png')}}";
+      img.alt = "Cookie Thief Sprite";
+      thiefEl.appendChild(img);
+      container.appendChild(thiefEl);
+
+      let hp = 3;
+      let clickCount = 0;
+
+      function hitThief() {
+        if (clickCount >= hp) return;
+        clickCount++;
+
+        // Update visual health pips
+        if (pips[clickCount - 1]) {
+          pips[clickCount - 1].classList.add("hit");
+        }
+
+        if (!isMuted) {
+          sfxMalingHit.currentTime = 0;
+          sfxMalingHit.play().catch(() => {});
+        }
+
+        if (clickCount >= hp) {
+          // Defeated!
+          if (!isMuted) {
+            sfxMalingMati.currentTime = 0;
+            sfxMalingMati.play().catch(() => {});
+          }
+          // Reward Bounty for defending!
+          const bounty = 30;
+          cacheShowMyCookie = (cacheShowMyCookie || 0) + bounty;
+          tapcookie += bounty;
+          document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
+          localStorage.setItem("cookies", cacheShowMyCookie);
+          spawnParticle(posX, posY, "+" + bounty + " BOUNTY! 🎯");
+          cleanupThief();
+        }
+      }
+
+      thiefEl.addEventListener("click", hitThief);
+      activeThiefDefendFn = hitThief;
+
+      // Calculate path toward the cookie target
+      const cookieRect = document.getElementById("cookieTap").getBoundingClientRect();
+      const targetX = cookieRect.left + cookieRect.width / 2 - 35;
+      const targetY = cookieRect.top + cookieRect.height / 2 - 35;
+
+      const maxX = Math.max(100, window.innerWidth - 80);
+      const maxY = Math.max(100, window.innerHeight - 80);
+      let posX = Math.random() > 0.5 ? Math.random() * 100 : maxX - 100;
+      let posY = Math.random() * (maxY - 200) + 100;
+
+      thiefEl.style.left = posX + "px";
+      thiefEl.style.top = posY + "px";
+
+      const speed = 1.6;
+      const moveInterval = setInterval(() => {
+        if (!isThiefActive) {
+          clearInterval(moveInterval);
+          return;
+        }
+
+        const deltaX = targetX - posX;
+        const deltaY = targetY - posY;
+        const distance = Math.hypot(deltaX, deltaY);
+
+        if (distance < 20) {
+          // Thief reached cookie vault! Deduct cookies
+          clearInterval(moveInterval);
+          if (clickCount < hp) {
+            thiefPenalty();
+          }
+          cleanupThief();
+          return;
+        }
+
+        posX += (deltaX / distance) * speed;
+        posY += (deltaY / distance) * speed;
+        thiefEl.style.left = posX + "px";
+        thiefEl.style.top = posY + "px";
+      }, 16);
+
+      function thiefPenalty() {
+        if (!isMuted) {
+          sfxKemalingan.currentTime = 0;
+          sfxKemalingan.play().catch(() => {});
+        }
+
+        // Steal 15% of total cookies (minimum 20, max 500)
+        const stolen = Math.min(500, Math.max(20, Math.floor((cacheShowMyCookie || 0) * 0.15)));
+        
+        // Shatter active combo multiplier!
+        combo = 1;
+        if (comboBadge) {
+          comboBadge.textContent = "x1";
+          comboBadge.classList.remove("active");
+        }
+
+        // Spawn floating negative particle over cookie
+        const cookieRect = document.getElementById("cookieTap").getBoundingClientRect();
+        spawnParticle(cookieRect.left + cookieRect.width / 2, cookieRect.top, "-" + stolen + " STOLEN! 🏃💨", true);
+
+        // Flash Alert Banner with breached state
+        if (thiefBanner) {
+          thiefBanner.classList.add("active");
+          const title = thiefBanner.querySelector(".thief-alert-title");
+          const hint = thiefBanner.querySelector(".thief-alert-hint");
+          if (title) title.textContent = "⚠️ VAULT BREACHED! -" + stolen + " COOKIES! ⚠️";
+          if (hint) hint.textContent = "The thief looted your vault and shattered your combo multiplier!";
+          setTimeout(() => {
+            if (!isThiefActive) {
+              thiefBanner.classList.remove("active");
+              if (title) title.textContent = "⚠️ THIEF INVASION! ⚠️";
+              if (hint) hint.innerHTML = 'A thief is stealing cookies! Click it 3 times or press <kbd>D</kbd> to defend!';
+            }
+          }, 4000);
+        }
+
+        if (currentUser) {
+          const thiefPenaltyPayload = JSON.stringify({ request: [currentUser, currentPass, -stolen] });
+          fetch('/sendCookies', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: thiefPenaltyPayload
+          })
+          .then(() => showMyCookie())
+          .catch(err => console.error("Penalty sync error:", err));
+        } else {
+          cacheShowMyCookie = Math.max(0, (cacheShowMyCookie || 0) - stolen);
+          document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
+          localStorage.setItem("cookies", cacheShowMyCookie);
+        }
+      }
+
+      function cleanupThief() {
+        isThiefActive = false;
+        activeThiefDefendFn = null;
+        if (statusPill) {
+          statusPill.textContent = "DEFENSE: SECURE";
+          statusPill.style.backgroundColor = "var(--color-accent-magenta)";
+        }
+        if (thiefEl.parentNode) thiefEl.remove();
+      }
+    }
+
+    // Keyboard Controls: 'Space' to tap cookie, 'D' to strike thief
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.repeat) return; // Prevent holding spacebar from spamming taps!
+      if (e.code === "Space") {
+        e.preventDefault();
+        taptap();
+      } else if ((e.key === "d" || e.key === "D") && isThiefActive && activeThiefDefendFn) {
+        e.preventDefault();
+        activeThiefDefendFn();
+      }
+    });
+
+    // Initial Load
+    showMyCookie();
+  </script>
+</body>
 </html>
