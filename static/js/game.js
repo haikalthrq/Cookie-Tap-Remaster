@@ -170,9 +170,14 @@ function taptap(event) {
   }
   spawnParticle(x, y, earned > 1 ? "+" + earned + " COMBO!" : "+1");
 
-  // Dynamic Tap Trigger: Fast baking streaks can provoke a thief if off cooldown
+  // Dynamic Tap Provocation: Intense baking activity & combo streaks attract thieves!
   if (!isThiefActive && (cacheShowMyCookie || 0) >= 35 && (Date.now() - lastThiefEndTime > THIEF_COOLDOWN_MS)) {
-    if (comboStreak >= 12 && Math.random() < 0.035) {
+    // Scent scales directly with combo level:
+    // Combo x1: 2% chance per tap (streak >= 4)
+    // Combo x2-x4: 6% chance per tap (streak >= 5)
+    // Combo x5+: 12% chance per tap (intense bakery aroma!)
+    const tapProvokeChance = roundedCombo >= 5 ? 0.12 : (roundedCombo >= 2 ? 0.06 : 0.02);
+    if (comboStreak >= 4 && Math.random() < tapProvokeChance) {
       checkAndSpawnThief();
     }
   }
@@ -341,18 +346,19 @@ let isThiefActive = false;
 let activeThiefDefendFn = null;
 let thiefTimer = null;
 let lastThiefEndTime = 0;
-const THIEF_COOLDOWN_MS = 14000; // 14s minimum breather between thief invasions
+const THIEF_COOLDOWN_MS = 6500; // 6.5s breather between thief invasions
 
 function getThiefInterval() {
   const cookies = Math.max(0, cacheShowMyCookie || 0);
   // Dynamic Frequency Curve:
-  // - 35 to 100 cookies: every 45 - 60 seconds (rare, gentle introduction)
-  // - 500 to 2,000 cookies: every 28 - 38 seconds (steady arcade pressure)
-  // - 10,000+ cookies: every 18 - 25 seconds (active high-stakes vault defense)
-  const factor = Math.min(1, Math.max(0, (Math.log10(Math.max(10, cookies)) - 1.5) / 3.0));
-  const baseSec = Math.round(50 - factor * 30); // 50s down to 20s
-  const jitter = Math.floor(Math.random() * 8) - 4; // ±4s jitter
-  return Math.max(16, baseSec + jitter) * 1000;
+  // - 35 to 100 cookies: every 24 - 32 seconds (gentle introduction)
+  // - 100 to 500 cookies: every 16 - 22 seconds (active arcade pressure)
+  // - 500 to 2,000 cookies: every 12 - 16 seconds (intense defense)
+  // - 10,000+ cookies: every 8 - 12 seconds (high-stakes peak arcade)
+  const factor = Math.min(1, Math.max(0, (Math.log10(Math.max(10, cookies)) - 1.5) / 2.5));
+  const baseSec = Math.round(26 - factor * 16); // 26s down to 10s
+  const jitter = Math.floor(Math.random() * 4) - 2; // ±2s jitter
+  return Math.max(8, baseSec + jitter) * 1000;
 }
 
 function scheduleNextThief(delayMs = null) {
@@ -366,14 +372,14 @@ function scheduleNextThief(delayMs = null) {
 function checkAndSpawnThief() {
   const now = Date.now();
   if (isThiefActive || (now - lastThiefEndTime < THIEF_COOLDOWN_MS)) {
-    scheduleNextThief(7000);
+    scheduleNextThief(3500);
     return;
   }
   // Safe zone: require at least 35 cookies before thieves start appearing
   if ((cacheShowMyCookie || 0) >= 35) {
     thief();
   } else {
-    scheduleNextThief(12000);
+    scheduleNextThief(6000);
   }
 }
 
@@ -473,11 +479,11 @@ function thief() {
   thiefEl.style.top = posY + "px";
 
   // Dynamic Speed Curve:
-  // - Starts at 1.35 px/frame (~4.5s travel) at 35-100 cookies
+  // - Starts at 1.40 px/frame (~4.5s travel) at 35-100 cookies
   // - Smoothly increases with log10(cookies)
-  // - Hard capped at 2.50 px/frame (~2.3s travel) so ordinary human reaction + 3 clicks is ALWAYS 100% fair and winnable!
-  const progress = Math.min(1, Math.max(0, (Math.log10(Math.max(10, currentCookies)) - 1.5) / 3.2));
-  const speed = 1.35 + progress * 1.15; // Range: 1.35 to 2.50
+  // - Hard capped at 2.45 px/frame (~2.3s travel) so ordinary human reaction + 3 clicks is ALWAYS 100% fair and winnable!
+  const progress = Math.min(1, Math.max(0, (Math.log10(Math.max(10, currentCookies)) - 1.5) / 2.5));
+  const speed = 1.40 + progress * 1.05; // Range: 1.40 to 2.45
 
   const moveInterval = setInterval(() => {
     if (!isThiefActive) {
@@ -971,4 +977,4 @@ window.addEventListener("keyup", (e) => {
 
 // Initial Load & Thief Invasion Scheduler
 showMyCookie();
-scheduleNextThief(15000);
+scheduleNextThief(5000);
