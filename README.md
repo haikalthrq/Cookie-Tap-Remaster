@@ -49,8 +49,6 @@ cookie-tap/
 ├── main.py              # Flask server and route handlers
 ├── database.py          # SQLite persistence, password hashing, and cache
 ├── requirements.txt     # Python dependencies
-├── DESIGN.md            # Design system tokens and UI rules
-├── PRODUCT.md           # Product specification and game mechanics
 ├── VERSION_DIFFERENCES.md # Upstream vs. fork technical changelog
 ├── data/                # SQLite database and periodic JSON backups
 │   ├── cookie_tap.db    # WAL-mode persistent database
