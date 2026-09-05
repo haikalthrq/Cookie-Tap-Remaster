@@ -38,7 +38,7 @@ The project runs on a single Flask application (`main.py`) on port `8080`:
 2. **Leaderboard Engine**: A background daemon thread periodically sorts player scores and saves the sorted rankings to `leaderboard.json` every 7 seconds.
 3. **Client-Side State**: During gameplay, taps accumulate locally and automatically synchronize with the server every 5 seconds via `POST /sendCookies`.
 
-For a detailed comparison of this version versus the original upstream Replit version, see [PERBEDAAN_VERSI.md](PERBEDAAN_VERSI.md).
+For a detailed comparison of this version versus the original upstream Replit version, see [VERSION_DIFFERENCES.md](VERSION_DIFFERENCES.md).
 
 ---
 
@@ -51,7 +51,7 @@ cookie-tap/
 ├── requirements.txt     # Python dependencies
 ├── DESIGN.md            # Design system tokens and UI rules
 ├── PRODUCT.md           # Product specification and game mechanics
-├── PERBEDAAN_VERSI.md   # Upstream vs. fork technical changelog
+├── VERSION_DIFFERENCES.md # Upstream vs. fork technical changelog
 ├── data/                # SQLite database and periodic JSON backups
 │   ├── cookie_tap.db    # WAL-mode persistent database
 │   └── backups/         # database.json and leaderboard.json backups
