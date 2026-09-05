@@ -90,13 +90,17 @@ function fetchLeaderboard() {
 fetchLeaderboard();
 setInterval(fetchLeaderboard, 7000);
 
-// Check Player Session
+// Check Player Session & Guest Warning
 const savedUser = localStorage.getItem("username");
 const navUserLabel = document.getElementById("navUserLabel");
 const navUserBtn = document.getElementById("navUserBtn");
+const guestNotice = document.getElementById("leaderboardGuestNotice");
+
 if (savedUser) {
   if (navUserLabel) navUserLabel.textContent = savedUser.toUpperCase();
+  if (guestNotice) guestNotice.style.display = "none";
 } else {
   if (navUserLabel) navUserLabel.textContent = "LOGIN";
   if (navUserBtn) navUserBtn.href = "/login";
+  if (guestNotice) guestNotice.style.display = "flex";
 }

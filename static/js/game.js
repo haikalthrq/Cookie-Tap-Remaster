@@ -144,17 +144,29 @@ function taptap(event) {
 
   playTapSound();
 
+  const cookieTarget = document.getElementById("cookieTap");
+  const cookieAura = document.querySelector(".cookie-aura");
+
+  // Tactile cookie press bounce and aura bloom
+  if (cookieTarget) {
+    cookieTarget.classList.add("is-pressed");
+    setTimeout(() => cookieTarget.classList.remove("is-pressed"), 90);
+  }
+  if (cookieAura) {
+    cookieAura.classList.add("pulse-tap");
+    setTimeout(() => cookieAura.classList.remove("pulse-tap"), 110);
+  }
+
   // Spawn particle at click coordinate or centered over the giant cookie
   let x = window.innerWidth / 2;
   let y = window.innerHeight / 2;
-  const cookieTarget = document.getElementById("cookieTap");
   if (event && event.clientX) {
     x = event.clientX;
     y = event.clientY;
   } else if (cookieTarget) {
     const rect = cookieTarget.getBoundingClientRect();
-    x = rect.left + rect.width / 2 + (Math.random() * 30 - 15);
-    y = rect.top + rect.height / 2 + (Math.random() * 30 - 15);
+    x = rect.left + rect.width / 2 + (Math.random() * 40 - 20);
+    y = rect.top + rect.height / 3 + (Math.random() * 20 - 10);
   }
   spawnParticle(x, y, earned > 1 ? "+" + earned + " COMBO!" : "+1");
 }
@@ -888,10 +900,23 @@ window.addEventListener("keydown", (e) => {
   if (e.repeat) return; // Prevent holding spacebar from spamming taps!
   if (e.code === "Space") {
     e.preventDefault();
+    const cookieTarget = document.getElementById("cookieTap");
+    if (cookieTarget) {
+      cookieTarget.classList.add("is-pressed");
+    }
     taptap();
   } else if ((e.key === "d" || e.key === "D") && isThiefActive && activeThiefDefendFn) {
     e.preventDefault();
     activeThiefDefendFn();
+  }
+});
+
+window.addEventListener("keyup", (e) => {
+  if (e.code === "Space") {
+    const cookieTarget = document.getElementById("cookieTap");
+    if (cookieTarget) {
+      cookieTarget.classList.remove("is-pressed");
+    }
   }
 });
 

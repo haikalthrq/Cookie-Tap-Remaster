@@ -48,6 +48,21 @@
       <div id="topPlayerTicker" class="ticker-text">LOADING CHAMPION...</div>
     </aside>
 
+    <!-- Guest Pilot Warning Banner -->
+    <div id="leaderboardGuestNotice" class="leaderboard-guest-banner" role="alert" style="display: none;">
+      <div class="guest-banner-lead">
+        <span class="guest-banner-icon" aria-hidden="true">&#9888;&#65039;</span>
+        <div class="guest-banner-text">
+          <strong>GUEST DETECTED</strong>
+          <span>You are currently not logged in. Sign in or register to record your cookie count and claim your rank on the Hall of Fame!</span>
+        </div>
+      </div>
+      <div class="guest-banner-actions">
+        <a href="/login" class="ds-btn-action" onclick="playBtnAudio()">&#9654; LOGIN</a>
+        <a href="/register" class="ds-btn-secondary" onclick="playBtnAudio()">REGISTER</a>
+      </div>
+    </div>
+
     <!-- Main Retro Arcade Cabinet Container -->
     <section class="arcade-cabinet-box" aria-label="Hall of Fame Cabinet">
       <div class="cabinet-marquee">
