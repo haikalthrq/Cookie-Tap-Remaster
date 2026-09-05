@@ -108,6 +108,7 @@ a {
   letter-spacing: 0.05em;
   color: #ffffff;
   text-shadow: 2px 2px var(--color-primary);
+  white-space: nowrap;
 }
 
 .header-actions {
@@ -263,6 +264,8 @@ a {
   padding: 3px 10px;
   border-radius: var(--radius-full);
   border: 1px solid #ffffff;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .blinking-prompt {
@@ -270,6 +273,7 @@ a {
   font-size: var(--font-size-title);
   color: var(--color-accent-green);
   letter-spacing: 0.05em;
+  white-space: nowrap;
   animation: promptBlink 1.2s infinite ease-in-out;
 }
 
@@ -622,36 +626,261 @@ a {
 
 /* Mobile Responsiveness */
 @media (max-width: 640px) {
+  .arcade-header {
+    padding: 8px 14px;
+  }
+
+  .header-branding {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .header-logo {
+    width: 36px;
+    height: 36px;
+  }
+
   .header-title {
-    font-size: var(--font-size-title);
+    font-size: 1.35rem;
   }
 
   .header-actions {
     gap: 6px;
   }
 
-  .ds-btn-action,
-  .ds-btn-secondary {
-    font-size: var(--font-size-body);
-    padding: 10px 16px;
+  .header-actions .ds-btn-action,
+  .header-actions .ds-btn-secondary {
+    font-size: 0.85rem;
+    padding: 7px 10px;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
   }
 
   .arcade-portal {
-    padding: 16px 12px 48px;
+    padding: 12px 12px 40px;
+    gap: 14px;
+    max-width: 100%;
+  }
+
+  .arcade-ticker-bar {
+    padding: 6px 12px;
+    gap: 8px;
+  }
+
+  .ticker-tag {
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  .ticker-text {
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cabinet-marquee {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .arcade-pill {
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    letter-spacing: 0.02em;
+  }
+
+  .blinking-prompt {
+    font-size: clamp(0.75rem, 3vw, 0.95rem);
+    text-align: center;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .cabinet-screen {
-    padding: 24px 16px;
+    padding: 20px 14px;
+    gap: 14px;
+  }
+
+  .portal-heading {
+    font-size: clamp(1.75rem, 6vw, 2.3rem);
+    line-height: 1.08;
+  }
+
+  .portal-slogan {
+    font-size: 0.875rem;
+    line-height: 1.35;
+    max-width: 340px;
+  }
+
+  .cookie-hero-stage {
+    padding: 4px 0;
   }
 
   .cookie-preview-btn {
-    width: 170px;
-    height: 170px;
+    width: 135px;
+    height: 135px;
+    border-width: 3.5px;
+    box-shadow: 0 6px 0 var(--color-cabinet-navy), 0 12px 20px rgba(12, 3, 66, 0.2);
   }
 
   .cookie-aura {
-    width: 200px;
-    height: 200px;
+    width: 160px;
+    height: 160px;
+  }
+
+  .portal-cta-container {
+    gap: 10px;
+    max-width: 100%;
+  }
+
+  .btn-hero-play {
+    font-size: 1.35rem;
+    padding: 11px 18px;
+  }
+
+  .home-auth-grid {
+    gap: 8px;
+  }
+
+  .home-grid-btn {
+    font-size: 1.1rem;
+    padding: 9px 12px;
+  }
+
+  .home-how-btn {
+    font-size: 1.1rem;
+    padding: 9px 14px;
+  }
+
+  .pilot-status-card {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+
+  .pilot-name {
+    font-size: 1.3rem;
+  }
+
+  .home-secondary-row {
+    gap: 6px;
+  }
+
+  .home-sub-btn {
+    padding: 8px 6px;
+    font-size: 0.8rem;
+  }
+
+  .modal-card {
+    padding: 18px 14px;
+    gap: 12px;
+    max-height: 88vh;
+    overflow-y: auto;
+  }
+
+  .modal-title {
+    font-size: 1.4rem;
+  }
+
+  .rule-steps {
+    gap: 8px;
+  }
+
+  .rule-step {
+    padding: 8px 10px;
+    gap: 10px;
+  }
+
+  .rule-step-desc {
+    font-size: 0.8rem;
+  }
+
+  .arcade-modal-card {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 420px) {
+  .arcade-header {
+    padding: 6px 10px;
+  }
+
+  .header-logo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .header-title {
+    font-size: 1.15rem;
+  }
+
+  .header-actions {
+    gap: 4px;
+  }
+
+  .header-actions .ds-btn-action,
+  .header-actions .ds-btn-secondary {
+    font-size: 0.78rem;
+    padding: 6px 8px;
+  }
+
+  .arcade-portal {
+    padding: 10px 8px 32px;
+    gap: 10px;
+  }
+
+  .ticker-tag {
+    font-size: 0.82rem;
+  }
+
+  .ticker-text {
+    font-size: 0.82rem;
+  }
+
+  .arcade-pill {
+    font-size: 0.68rem;
+    padding: 2px 5px;
+  }
+
+  .blinking-prompt {
+    font-size: 0.75rem;
+  }
+
+  .cabinet-screen {
+    padding: 16px 10px;
+    gap: 12px;
+  }
+
+  .portal-heading {
+    font-size: 1.65rem;
+  }
+
+  .cookie-preview-btn {
+    width: 120px;
+    height: 120px;
+  }
+
+  .cookie-aura {
+    width: 140px;
+    height: 140px;
+  }
+
+  .btn-hero-play {
+    font-size: 1.2rem;
+    padding: 10px 14px;
+  }
+
+  .home-grid-btn {
+    font-size: 1rem;
+    padding: 8px 10px;
+  }
+
+  .home-how-btn {
+    font-size: 1rem;
+    padding: 8px 12px;
   }
 }
 

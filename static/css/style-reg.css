@@ -107,6 +107,7 @@ a {
   letter-spacing: 0.05em;
   color: #ffffff;
   text-shadow: 2px 2px var(--color-primary);
+  white-space: nowrap;
 }
 
 .header-actions {
@@ -228,6 +229,8 @@ a {
   padding: 3px 10px;
   border-radius: var(--radius-full);
   border: 1px solid #ffffff;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .blinking-prompt {
@@ -235,6 +238,7 @@ a {
   font-size: var(--font-size-title);
   color: var(--color-accent-green);
   letter-spacing: 0.05em;
+  white-space: nowrap;
   animation: promptBlink 1.2s infinite ease-in-out;
 }
 
@@ -351,16 +355,109 @@ a {
 
 /* Mobile Responsiveness */
 @media (max-width: 640px) {
+  .arcade-header {
+    padding: 8px 14px;
+  }
+
+  .header-branding {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .header-logo {
+    width: 36px;
+    height: 36px;
+  }
+
   .header-title {
-    font-size: var(--font-size-title);
+    font-size: 1.35rem;
+  }
+
+  .header-actions .ds-btn-secondary {
+    font-size: 0.85rem;
+    padding: 7px 10px;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
   }
 
   .auth-stage {
-    padding: 20px 12px 48px;
+    padding: 16px 12px 40px;
+    gap: 14px;
+  }
+
+  .cabinet-marquee {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .arcade-pill {
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    letter-spacing: 0.02em;
+  }
+
+  .blinking-prompt {
+    font-size: clamp(0.72rem, 2.8vw, 0.95rem);
+    text-align: center;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .cabinet-screen {
-    padding: 24px 18px;
+    padding: 20px 14px;
+    gap: 14px;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+  }
+
+  .auth-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .ds-field-input {
+    padding: 9px 12px;
+    font-size: 0.95rem;
+  }
+
+  .ds-btn-action {
+    font-size: 1.25rem;
+    padding: 11px 18px;
+  }
+}
+
+@media (max-width: 420px) {
+  .arcade-header {
+    padding: 6px 10px;
+  }
+
+  .header-logo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .header-title {
+    font-size: 1.15rem;
+  }
+
+  .header-actions .ds-btn-secondary {
+    font-size: 0.78rem;
+    padding: 6px 8px;
+  }
+
+  .auth-stage {
+    padding: 10px 8px 32px;
+  }
+
+  .cabinet-screen {
+    padding: 16px 12px;
+  }
+
+  .auth-title {
+    font-size: 1.35rem;
   }
 }
 

@@ -108,6 +108,7 @@ a {
   letter-spacing: 0.05em;
   color: #ffffff;
   text-shadow: 2px 2px var(--color-primary);
+  white-space: nowrap;
 }
 
 .header-actions {
@@ -330,6 +331,8 @@ a {
   padding: 3px 10px;
   border-radius: var(--radius-full);
   border: 1px solid #ffffff;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .blinking-prompt {
@@ -337,6 +340,7 @@ a {
   font-size: var(--font-size-title);
   color: var(--color-accent-green);
   letter-spacing: 0.05em;
+  white-space: nowrap;
   animation: promptBlink 1.2s infinite ease-in-out;
 }
 
@@ -479,25 +483,172 @@ a {
 
 /* Mobile Responsive */
 @media (max-width: 640px) {
+  .arcade-header {
+    padding: 8px 14px;
+  }
+
+  .header-branding {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .header-logo {
+    width: 36px;
+    height: 36px;
+  }
+
   .header-title {
-    font-size: var(--font-size-title);
+    font-size: 1.35rem;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .header-actions .ds-btn-action,
+  .header-actions .ds-btn-secondary {
+    font-size: 0.85rem;
+    padding: 7px 10px;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
   }
 
   .leaderboard-stage {
-    padding: 16px 12px 48px;
+    padding: 12px 12px 40px;
+    gap: 14px;
+  }
+
+  .arcade-ticker-bar {
+    padding: 6px 12px;
+    gap: 8px;
+  }
+
+  .ticker-tag {
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  .ticker-text {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cabinet-marquee {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .arcade-pill {
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    letter-spacing: 0.02em;
+  }
+
+  .blinking-prompt {
+    font-size: clamp(0.72rem, 2.8vw, 0.95rem);
+    text-align: center;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .cabinet-screen {
-    padding: 20px 14px;
+    padding: 18px 14px;
+    gap: 14px;
+  }
+
+  .leaderboard-title {
+    font-size: 1.4rem;
   }
 
   .ranking-item {
     padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .player-info {
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
   }
 
   .player-rank {
     min-width: 32px;
     font-size: var(--font-size-title);
+  }
+
+  .player-name {
+    font-size: 0.92rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .player-score {
+    font-size: 1.15rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .leaderboard-footer-cta .ds-btn-action {
+    font-size: 1.2rem;
+    padding: 11px 16px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .arcade-header {
+    padding: 6px 10px;
+  }
+
+  .header-logo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .header-title {
+    font-size: 1.15rem;
+  }
+
+  .header-actions {
+    gap: 4px;
+  }
+
+  .header-actions .ds-btn-action,
+  .header-actions .ds-btn-secondary {
+    font-size: 0.78rem;
+    padding: 6px 8px;
+  }
+
+  .leaderboard-stage {
+    padding: 10px 8px 32px;
+    gap: 10px;
+  }
+
+  .leaderboard-title {
+    font-size: 1.25rem;
+  }
+
+  .ranking-item {
+    padding: 8px 10px;
+  }
+
+  .player-rank {
+    min-width: 26px;
+    font-size: 1.2rem;
+  }
+
+  .player-score {
+    font-size: 1rem;
+  }
+
+  .leaderboard-footer-cta .ds-btn-action {
+    font-size: 1.05rem;
+    padding: 10px 12px;
   }
 }
 

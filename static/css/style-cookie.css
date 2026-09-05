@@ -108,6 +108,7 @@ a {
   letter-spacing: 0.05em;
   color: #ffffff;
   text-shadow: 2px 2px var(--color-primary);
+  white-space: nowrap;
 }
 
 .header-actions {
@@ -335,6 +336,8 @@ a {
   padding: 3px 10px;
   border-radius: var(--radius-full);
   border: 1px solid #ffffff;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .blinking-prompt {
@@ -342,6 +345,7 @@ a {
   font-size: var(--font-size-title);
   color: var(--color-accent-green);
   letter-spacing: 0.05em;
+  white-space: nowrap;
   animation: promptBlink 1.2s infinite ease-in-out;
 }
 
@@ -897,38 +901,202 @@ a {
 
 /* Mobile Responsiveness */
 @media (max-width: 680px) {
+  .arcade-header {
+    padding: 8px 14px;
+  }
+
+  .header-branding {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .header-logo {
+    width: 36px;
+    height: 36px;
+  }
+
   .header-title {
-    font-size: var(--font-size-title);
+    font-size: 1.35rem;
   }
 
   .header-actions {
     gap: 6px;
   }
 
-  .arcade-stage {
-    padding: 16px 12px 48px;
+  .header-actions .ds-btn-action,
+  .header-actions .ds-btn-secondary {
+    font-size: 0.85rem;
+    padding: 7px 10px;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
   }
 
-  .arcade-deck-row {
-    grid-template-columns: 1fr;
+  .arcade-stage {
+    padding: 12px 12px 40px;
+    gap: 14px;
+  }
+
+  .arcade-ticker-bar {
+    padding: 6px 12px;
+    gap: 8px;
+  }
+
+  .ticker-tag {
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  .ticker-text {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cabinet-marquee {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .arcade-pill {
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    letter-spacing: 0.02em;
+  }
+
+  .blinking-prompt {
+    font-size: clamp(0.72rem, 2.8vw, 0.95rem);
+    text-align: center;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cabinet-screen {
+    padding: 18px 14px;
+    gap: 14px;
+  }
+
+  .cookie-counter-number {
+    font-size: clamp(2.2rem, 8vw, 3rem);
+  }
+
+  .hud-stats-row {
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hud-stat-chip {
+    font-size: 0.8rem;
+    padding: 4px 8px;
   }
 
   .cookie-target {
+    width: 175px;
+    height: 175px;
+  }
+
+  .cookie-aura {
     width: 200px;
     height: 200px;
   }
 
-  .cookie-aura {
-    width: 230px;
-    height: 230px;
+  .arcade-deck-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
-  .cookie-counter-number {
-    font-size: var(--font-size-headline);
+  .vault-bank-amount {
+    font-size: 2rem;
+  }
+
+  .vault-telemetry-grid {
+    gap: 8px;
+  }
+
+  .telemetry-card {
+    padding: 8px 10px;
+  }
+
+  .telemetry-label {
+    font-size: 0.75rem;
+  }
+
+  .telemetry-value {
+    font-size: 1.25rem;
+  }
+
+  .vault-action-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .arcade-modal-card {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 420px) {
+  .arcade-header {
+    padding: 6px 10px;
+  }
+
+  .header-logo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .header-title {
+    font-size: 1.15rem;
+  }
+
+  .header-actions {
+    gap: 4px;
+  }
+
+  .header-actions .ds-btn-action,
+  .header-actions .ds-btn-secondary {
+    font-size: 0.78rem;
+    padding: 6px 8px;
+  }
+
+  .arcade-stage {
+    padding: 10px 8px 32px;
+    gap: 10px;
   }
 
   .ticker-text {
     display: none;
+  }
+
+  .cookie-target {
+    width: 155px;
+    height: 155px;
+  }
+
+  .cookie-aura {
+    width: 175px;
+    height: 175px;
+  }
+
+  .hud-stat-chip {
+    font-size: 0.75rem;
+    padding: 3px 6px;
+  }
+
+  .thief-alert-banner {
+    padding: 8px 12px;
+  }
+
+  .thief-alert-title {
+    font-size: 1.25rem;
+  }
+
+  .thief-alert-hint {
+    font-size: 0.8rem;
   }
 }
 
@@ -1431,30 +1599,7 @@ a {
   background-color: var(--color-accent-magenta-hover);
 }
 
-@media (max-width: 520px) {
-  .arcade-ticker-bar {
-    padding: 6px 12px;
-    gap: 8px;
-  }
 
-  .ticker-label {
-    font-size: var(--font-size-body);
-  }
-
-  .ticker-badge {
-    font-size: var(--font-size-body);
-    padding: 2px 6px;
-    max-width: 130px;
-  }
-
-  .ticker-text {
-    font-size: var(--font-size-body);
-  }
-
-  .vault-action-row {
-    flex-direction: column;
-  }
-}
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
