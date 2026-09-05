@@ -1,21 +1,21 @@
 # Cookie Tap
 
-An arcade-style competitive clicker web game built with Python (Flask) and vanilla HTML, CSS, and JavaScript.
+An arcade clicker web game built with Python (Flask) and vanilla HTML, CSS, and JavaScript.
 
-Players tap a giant cookie to bake cookies, build combo multipliers, defend against thieves, send gifts to friends, and compete on a live global leaderboard.
+Live demo: [haikalthrq.pythonanywhere.com](https://haikalthrq.pythonanywhere.com)
 
 ---
 
 ## Features
 
-- **Giant Cookie Arena**: Tap with your mouse or hit <kbd>Space</kbd> on the keyboard. Includes floating particle score feedback.
-- **Deterministic Combo Multiplier**: Every 5 consecutive taps within 1.8 seconds increases your score multiplier by +1x (up to 10x max). Failing to tap within 1.8 seconds resets the combo back to 1x.
-- **Thief Hazard Events**: When a player holds more than 40 cookies, thieves have a chance to spawn and march toward the cookie vault. Click the thief 3 times or press <kbd>D</kbd> to defend it for a +30 cookie bounty. If the thief reaches the vault, it steals 15% of your cookies (between 20 and 500) and resets your active combo.
-- **My Cookie Vault & Session Telemetry**: Tracks your current safe balance with automatic 5-second server synchronization. Displays live session stats: Peak Combo, Total Taps, Thieves Foiled, and Gifts Sent.
-- **Social Cookie Gifting**: Transfer cookies directly to any registered player by username. Includes quick increment chips (+10, +100, +500, MAX).
-- **Live Leaderboard**: Displays player rankings sorted by total cookies. Automatically updated by a background server thread every 7 seconds.
-- **Player Accounts & Memory Card**: Register, log in, change passwords, reset your cookie score to 0, or permanently delete your account. Unregistered players can play as guests with local storage.
-- **Retro Arcade Cabinet Interface**: Styled after 1990s coin-op arcade machines with Odibee Sans typography, Cabinet Navy and neon palettes, sound effects for taps, buttons, and thief alerts, plus a background music toggle.
+- **Giant Cookie Arena**: Tap with a mouse, touch screen, or hit <kbd>Space</kbd> on the keyboard. Floating text confirms each score increment.
+- **Combo Multiplier**: Every 5 consecutive taps within 1.8 seconds adds +1x to your multiplier, up to 10x. Waiting more than 1.8 seconds resets the multiplier to 1x.
+- **Thief Hazard Events**: At 35+ cookies, thieves spawn and walk toward your stash. Strike the thief 3 times or press <kbd>D</kbd> to defend your vault and claim a 5% cookie bounty (30 to 2,500 cookies). If a thief reaches the cookie, it steals 15% of your stash (20 to 500 cookies) and breaks your combo. Thief speed and spawn frequency scale with your total cookies.
+- **Vault and Session Telemetry**: Automatically synchronizes your cookie count with the server every 5 seconds. Tracks peak combo, total taps, thieves defeated, and gifts sent.
+- **Cookie Gifting**: Transfer cookies to any registered player by username, with quick-select buttons (+10, +100, +500, MAX).
+- **Live Leaderboard**: Displays player rankings sorted by total cookies, refreshed by a background thread every 7 seconds.
+- **Accounts and Guest Mode**: Register to save progress across devices, change passwords, or delete your account. Unregistered players can play immediately as guests using local storage.
+- **Arcade Interface & Audio**: Styled after 1990s coin-op cabinets with Odibee Sans and Inter typography, sound effects, background music, mute toggle, and full mobile support.
 
 ---
 
@@ -23,22 +23,22 @@ Players tap a giant cookie to bake cookies, build combo multipliers, defend agai
 
 | Key / Input | Action |
 | :--- | :--- |
-| **Left Click** / **Touch** | Tap cookie, click UI buttons, strike thief |
+| **Left Click** / **Touch** | Tap cookie, press buttons, strike thief |
 | <kbd>Space</kbd> | Tap the giant cookie |
 | <kbd>D</kbd> | Strike incoming thief |
 | <kbd>Esc</kbd> | Close account modal |
 
 ---
 
-## Architecture & How It Works
+## Architecture
 
-The project runs on a single Flask application (`main.py`) on port `8080`:
+The application runs as a single Flask service:
 
-1. **Authentication & Persistence**: User records (`username`, `password`, `cookie` count) are stored in `database.json`.
-2. **Leaderboard Engine**: A background daemon thread periodically sorts player scores and saves the sorted rankings to `leaderboard.json` every 7 seconds.
-3. **Client-Side State**: During gameplay, taps accumulate locally and automatically synchronize with the server every 5 seconds via `POST /sendCookies`.
+1. **Storage and Security**: User accounts, passwords hashed with `scrypt`, and cookie balances are stored in SQLite (`data/cookie_tap.db`) with Write-Ahead Logging (WAL) and automatic JSON backup exports in `data/backups/`.
+2. **Synchronization**: Player taps accumulate in client state and sync via `POST /sendCookies` every 5 seconds.
+3. **Leaderboard**: An in-memory cache delivers sub-millisecond leaderboard reads, while a background daemon thread periodically updates rankings.
 
-For a detailed comparison of this version versus the original upstream Replit version, see [VERSION_DIFFERENCES.md](VERSION_DIFFERENCES.md).
+For technical differences between this version and the original Replit version, see [VERSION_DIFFERENCES.md](VERSION_DIFFERENCES.md).
 
 ---
 
@@ -53,21 +53,21 @@ cookie-tap/
 ├── data/                # SQLite database and periodic JSON backups
 │   ├── cookie_tap.db    # WAL-mode persistent database
 │   └── backups/         # database.json and leaderboard.json backups
-├── tests/               # Automated unit tests and concurrency suite
+├── tests/               # Automated test suite
 │   ├── test_api.py
 │   └── test_concurrency.py
 ├── static/
-│   ├── css/             # Arcade design system stylesheets
-│   ├── js/              # Modular client scripts (game.js, index.js, etc.)
-│   ├── audio/           # Sound effects and BGM audio assets
-│   └── img/             # Sprites, icons, and logo graphics
-├── templates/           # Clean markup templates
+│   ├── css/             # Stylesheets (arcade cabinet themes)
+│   ├── js/              # Client scripts (game.js, auth.js, leaderboard.js)
+│   ├── audio/           # Sound effects and background music
+│   └── img/             # Sprites, icons, and logo assets
+├── templates/           # Jinja2 HTML templates
 │   ├── index.html       # Landing page
-│   ├── cookie.html      # Main cookie tap arena and control deck
-│   ├── leaderboard.html # Live ranking table
-│   ├── login.html       # Player sign-in
-│   └── register.html    # Player registration
-└── archive/             # Legacy backups (server2.py, cookie.js, etc.)
+│   ├── cookie.html      # Game arena
+│   ├── leaderboard.html # Live rankings
+│   ├── login.html       # Sign-in page
+│   └── register.html    # Account registration
+└── archive/             # Upstream reference code (server2.py, cookie.js)
 ```
 
 ---
@@ -82,13 +82,13 @@ cookie-tap/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/haikalthrq/Cookie-Tap-Remaster.git
-   cd Cookie-Tap-Remaster
+   git clone https://github.com/haikalthrq/cookie-tap.git
+   cd cookie-tap
    ```
 
 2. Create and activate a virtual environment:
    ```bash
-   # Windows (Command Prompt / PowerShell)
+   # Windows (PowerShell)
    python -m venv .venv
    .\.venv\Scripts\activate
 
@@ -107,19 +107,18 @@ cookie-tap/
    python main.py
    ```
 
-5. Open your browser and go to:
+5. Open your browser:
    ```text
    http://localhost:8080
    ```
 
-6. Run automated test suite:
+6. Run the test suite:
    ```bash
    python -m unittest discover tests
    ```
 
 ---
 
-## Origin & Credits
+## Origin and Credits
 
-This repository is an updated and standalone version of the original [cookie-tap](https://github.com/risal098/cookie-tap) project by [@risal098](https://github.com/risal098). The original project ran across two separate Replit services. This version merges the architecture into a single runnable local app, fixes client-server sync race conditions, updates the user interface, and adds game balance mechanics.
-
+This repository is a standalone rebuild of the original [cookie-tap](https://github.com/risal098/cookie-tap) by [@risal098](https://github.com/risal098). The original version ran across two separate Replit instances. This version unifies the architecture into a single server, replaces race-prone file reads with SQLite transactions, adds dynamic thief mechanics, and updates the interface for mobile and desktop screens.
