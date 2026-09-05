@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
 import json
+import os
 import threading
 import time
 import database
@@ -177,6 +178,10 @@ def delete_account():
         return json.dumps({"respond": "error", "message": str(e)})
 
 
+# ---------- Database & Worker Initialization ---------- #
+database.init_db()
+
+
 def sync_worker():
     while True:
         time.sleep(10)
@@ -184,8 +189,11 @@ def sync_worker():
             database.export_json_backup()
 
 
+_sync_thread = threading.Thread(target=sync_worker, daemon=True)
+_sync_thread.start()
+
+
 if __name__ == "__main__":
-    database.init_db()
-    t = threading.Thread(target=sync_worker, daemon=True)
-    t.start()
-    api.run(host="0.0.0.0", port=8080, debug=False)
+    port = int(os.environ.get("PORT", 8080))
+    api.run(host="0.0.0.0", port=port, debug=False)
+
