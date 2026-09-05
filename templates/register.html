@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Register | Cookie Tap</title>
-  <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
-  <link rel="stylesheet" href="{{url_for('static', filename='style-reg.css')}}">
+  <link rel="icon" href="{{url_for('static', filename='img/pngegg.png')}}" type="image/png">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/style-reg.css')}}">
 </head>
 <body>
   <!-- Fixed Arcade Header -->
   <header class="arcade-header">
     <div class="header-branding">
-      <img class="header-logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="Cookie Tap Logo">
+      <img class="header-logo" src="{{url_for('static', filename='img/pngegg.png')}}" alt="Cookie Tap Logo">
       <h1 class="header-title"><a href="/">Cookie Tap</a></h1>
     </div>
     <div class="header-actions">
@@ -77,72 +77,6 @@
     </section>
   </main>
 
-  <script>
-    const sfxButton = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-
-    function playBtnAudio() {
-      sfxButton.currentTime = 0;
-      sfxButton.play().catch(() => {});
-    }
-
-    function submitRegister() {
-      playBtnAudio();
-      const usernameInput = document.getElementById("usernameInput");
-      const passwordInput = document.getElementById("passwordInput");
-      const notice = document.getElementById("authNotice");
-      const submitBtn = document.getElementById("submitBtn");
-
-      const username = usernameInput.value.trim();
-      const password = passwordInput.value.trim();
-
-      if (!username || !password) {
-        notice.textContent = "Please fill in both fields.";
-        notice.className = "ds-notice error";
-        return;
-      }
-
-      if (username.length > 15 || password.length > 15) {
-        notice.textContent = "Username and password must not exceed 15 characters.";
-        notice.className = "ds-notice error";
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Registering...";
-
-      const payload = JSON.stringify({ request: [username, password] });
-      fetch('/registers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: payload
-      })
-      .then(res => res.json())
-      .then(data => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "REGISTER ACCOUNT";
-        if (data.respond === "succes") {
-          localStorage.setItem("username", username);
-          localStorage.setItem("password", password);
-          localStorage.setItem("cookies", 0);
-          notice.textContent = "Account created successfully! Entering cookie arena...";
-          notice.className = "ds-notice success";
-          setTimeout(() => location.replace("/cookie"), 400);
-        } else if (data.respond === "existed") {
-          notice.textContent = "Username already taken! Please choose another name.";
-          notice.className = "ds-notice error";
-        } else {
-          notice.textContent = "Registration failed. Please try again.";
-          notice.className = "ds-notice error";
-        }
-      })
-      .catch(err => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "REGISTER ACCOUNT";
-        notice.textContent = "Network error. Please try again.";
-        notice.className = "ds-notice error";
-        console.error(err);
-      });
-    }
-  </script>
+  <script src="{{url_for('static', filename='js/auth.js')}}" defer></script>
 </body>
 </html>

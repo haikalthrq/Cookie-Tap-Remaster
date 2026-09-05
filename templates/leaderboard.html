@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hall of Fame Leaderboard | Cookie Tap</title>
-  <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
-  <link rel="stylesheet" href="{{url_for('static', filename='style-leaderboard.css')}}">
+  <link rel="icon" href="{{url_for('static', filename='img/pngegg.png')}}" type="image/png">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/style-leaderboard.css')}}">
 </head>
 <body>
   <!-- Fixed Arcade Header -->
   <header class="arcade-header">
     <div class="header-branding">
-      <img class="header-logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="Cookie Tap Logo">
+      <img class="header-logo" src="{{url_for('static', filename='img/pngegg.png')}}" alt="Cookie Tap Logo">
       <h1 class="header-title"><a href="/">Cookie Tap</a></h1>
     </div>
     <div class="header-actions">
@@ -76,105 +76,6 @@
     </section>
   </main>
 
-  <script>
-    const sfxButton = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-
-    function playBtnAudio() {
-      sfxButton.currentTime = 0;
-      sfxButton.play().catch(() => {});
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement("div");
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    let lastLeaderboardSnapshot = "";
-
-    function fetchLeaderboard() {
-      fetch('/showLeaderboard', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: 'false'
-      })
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById("rankingsContainer");
-        const ticker = document.getElementById("topPlayerTicker");
-        const countBadge = document.getElementById("playerCountBadge");
-
-        if (!data || data.length === 0) {
-          container.innerHTML = '<div class="loading-notice">No bakers recorded yet. Be the first to tap!</div>';
-          ticker.textContent = "BE THE FIRST TO SET A RECORD!";
-          countBadge.textContent = "PLAYERS: 0";
-          lastLeaderboardSnapshot = "";
-          return;
-        }
-
-        // Fast fingerprinting check: skip DOM teardown if leaderboard hasn't changed
-        const snapshot = JSON.stringify(data);
-        if (snapshot === lastLeaderboardSnapshot) {
-          return;
-        }
-        lastLeaderboardSnapshot = snapshot;
-
-        countBadge.textContent = "PLAYERS: " + data.length;
-
-        // Update champion ticker
-        const champ = data[0];
-        if (champ) {
-          ticker.textContent = Number(champ[0]).toLocaleString() + " COOKIES • CHAMPION: " + champ[1];
-        }
-
-        container.innerHTML = "";
-        data.forEach((entry, index) => {
-          const cookies = Number(entry[0]);
-          const username = entry[1];
-          const rank = index + 1;
-
-          const item = document.createElement("div");
-          item.className = "ranking-item";
-          if (rank === 1) item.classList.add("rank-1");
-          else if (rank === 2) item.classList.add("rank-2");
-          else if (rank === 3) item.classList.add("rank-3");
-
-          let rankDisplay = "#" + rank;
-          if (rank === 1) rankDisplay = "&#129351; 1";
-          else if (rank === 2) rankDisplay = "&#129352; 2";
-          else if (rank === 3) rankDisplay = "&#129353; 3";
-
-          item.innerHTML = `
-            <div class="player-info">
-              <span class="player-rank">${rankDisplay}</span>
-              <span class="player-name">${escapeHtml(username)}</span>
-            </div>
-            <span class="player-cookies">${cookies.toLocaleString()} &#127850;</span>
-          `;
-          container.appendChild(item);
-        });
-      })
-      .catch(err => {
-        console.error("Error loading leaderboard:", err);
-        const container = document.getElementById("rankingsContainer");
-        container.innerHTML = '<div class="loading-notice">Unable to reach the vault. Retrying...</div>';
-      });
-    }
-
-    // Initial fetch and 7s auto-sync
-    fetchLeaderboard();
-    setInterval(fetchLeaderboard, 7000);
-
-    // Check Player Session
-    const savedUser = localStorage.getItem("username");
-    const navUserLabel = document.getElementById("navUserLabel");
-    const navUserBtn = document.getElementById("navUserBtn");
-    if (savedUser) {
-      if (navUserLabel) navUserLabel.textContent = savedUser.toUpperCase();
-    } else {
-      if (navUserLabel) navUserLabel.textContent = "LOGIN";
-      if (navUserBtn) navUserBtn.href = "/login";
-    }
-  </script>
+  <script src="{{url_for('static', filename='js/leaderboard.js')}}" defer></script>
 </body>
 </html>

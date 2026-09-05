@@ -2,23 +2,35 @@ import sqlite3
 import json
 import os
 import threading
+from contextlib import contextmanager
 from werkzeug.security import generate_password_hash, check_password_hash
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "cookie_tap.db")
-JSON_DB_PATH = os.path.join(os.path.dirname(__file__), "database.json")
-JSON_LB_PATH = os.path.join(os.path.dirname(__file__), "leaderboard.json")
+BASE_DIR = os.path.dirname(__file__)
+DATA_DIR = os.path.join(BASE_DIR, "data")
+os.makedirs(DATA_DIR, exist_ok=True)
+DB_PATH = os.path.join(DATA_DIR, "cookie_tap.db")
+
+BACKUP_DIR = os.path.join(DATA_DIR, "backups")
+os.makedirs(BACKUP_DIR, exist_ok=True)
+JSON_DB_PATH = os.path.join(BACKUP_DIR, "database.json")
+JSON_LB_PATH = os.path.join(BACKUP_DIR, "leaderboard.json")
 
 _cache_lock = threading.Lock()
 _leaderboard_cache = None
 _is_dirty = False
 
 
+@contextmanager
 def get_db():
     conn = sqlite3.connect(DB_PATH, timeout=20.0)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode = WAL;")
     conn.execute("PRAGMA synchronous = NORMAL;")
-    return conn
+    try:
+        with conn:
+            yield conn
+    finally:
+        conn.close()
 
 
 def init_db():

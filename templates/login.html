@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Login | Cookie Tap</title>
-  <link rel="icon" href="{{url_for('static', filename='assets/pngegg.png')}}" type="image/png">
-  <link rel="stylesheet" href="{{url_for('static', filename='style-log.css')}}">
+  <link rel="icon" href="{{url_for('static', filename='img/pngegg.png')}}" type="image/png">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/style-log.css')}}">
 </head>
 <body>
   <!-- Fixed Arcade Header -->
   <header class="arcade-header">
     <div class="header-branding">
-      <img class="header-logo" src="{{url_for('static', filename='assets/pngegg.png')}}" alt="Cookie Tap Logo">
+      <img class="header-logo" src="{{url_for('static', filename='img/pngegg.png')}}" alt="Cookie Tap Logo">
       <h1 class="header-title"><a href="/">Cookie Tap</a></h1>
     </div>
     <div class="header-actions">
@@ -77,63 +77,6 @@
     </section>
   </main>
 
-  <script>
-    const sfxButton = new Audio("{{url_for('static', filename='assets/button_tap.mp3')}}");
-
-    function playBtnAudio() {
-      sfxButton.currentTime = 0;
-      sfxButton.play().catch(() => {});
-    }
-
-    function submitLogin() {
-      playBtnAudio();
-      const usernameInput = document.getElementById("usernameInput");
-      const passwordInput = document.getElementById("passwordInput");
-      const notice = document.getElementById("authNotice");
-      const submitBtn = document.getElementById("submitBtn");
-
-      const username = usernameInput.value.trim();
-      const password = passwordInput.value.trim();
-
-      if (!username || !password) {
-        notice.textContent = "Please fill in both username and password.";
-        notice.className = "ds-notice error";
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Logging in...";
-
-      const payload = JSON.stringify({ request: [username, password] });
-      fetch('/logins', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: payload
-      })
-      .then(res => res.json())
-      .then(data => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "LOGIN NOW";
-        if (data.respond !== "not found") {
-          localStorage.setItem("username", username);
-          localStorage.setItem("password", password);
-          localStorage.setItem("cookies", data.respond);
-          notice.textContent = "Login successful! Entering vault...";
-          notice.className = "ds-notice success";
-          setTimeout(() => location.replace("/cookie"), 400);
-        } else {
-          notice.textContent = "Account not found or password incorrect. Please try again.";
-          notice.className = "ds-notice error";
-        }
-      })
-      .catch(err => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "LOGIN NOW";
-        notice.textContent = "Network error. Please try again.";
-        notice.className = "ds-notice error";
-        console.error(err);
-      });
-    }
-  </script>
+  <script src="{{url_for('static', filename='js/auth.js')}}" defer></script>
 </body>
 </html>

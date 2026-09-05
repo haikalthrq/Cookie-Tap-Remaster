@@ -48,22 +48,28 @@ For a detailed comparison of this version versus the original upstream Replit ve
 cookie-tap/
 ├── main.py              # Flask server and route handlers
 ├── database.py          # SQLite persistence, password hashing, and cache
-├── database.json        # Player accounts and cookie balances (backup)
-├── leaderboard.json     # Sorted leaderboard ranking data (backup)
 ├── requirements.txt     # Python dependencies
 ├── DESIGN.md            # Design system tokens and UI rules
 ├── PRODUCT.md           # Product specification and game mechanics
 ├── PERBEDAAN_VERSI.md   # Upstream vs. fork technical changelog
-├── archive/             # Legacy backups (server2.py, cookie.js, etc.)
+├── data/                # SQLite database and periodic JSON backups
+│   ├── cookie_tap.db    # WAL-mode persistent database
+│   └── backups/         # database.json and leaderboard.json backups
+├── tests/               # Automated unit tests and concurrency suite
+│   ├── test_api.py
+│   └── test_concurrency.py
 ├── static/
-│   ├── style-cookie.css # Arcade design system stylesheets
-│   └── assets/          # Sprites, audio files (MP3), and icons
-└── templates/
-    ├── index.html       # Landing page
-    ├── cookie.html      # Main cookie tap arena and control deck
-    ├── leaderboard.html # Live ranking table
-    ├── login.html       # Player sign-in
-    └── register.html    # Player registration
+│   ├── css/             # Arcade design system stylesheets
+│   ├── js/              # Modular client scripts (game.js, index.js, etc.)
+│   ├── audio/           # Sound effects and BGM audio assets
+│   └── img/             # Sprites, icons, and logo graphics
+├── templates/           # Clean markup templates
+│   ├── index.html       # Landing page
+│   ├── cookie.html      # Main cookie tap arena and control deck
+│   ├── leaderboard.html # Live ranking table
+│   ├── login.html       # Player sign-in
+│   └── register.html    # Player registration
+└── archive/             # Legacy backups (server2.py, cookie.js, etc.)
 ```
 
 ---
@@ -106,6 +112,11 @@ cookie-tap/
 5. Open your browser and go to:
    ```text
    http://localhost:8080
+   ```
+
+6. Run automated test suite:
+   ```bash
+   python -m unittest discover tests
    ```
 
 ---
