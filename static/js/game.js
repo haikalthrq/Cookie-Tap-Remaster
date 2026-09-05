@@ -169,6 +169,13 @@ function taptap(event) {
     y = rect.top + rect.height / 3 + (Math.random() * 20 - 10);
   }
   spawnParticle(x, y, earned > 1 ? "+" + earned + " COMBO!" : "+1");
+
+  // Dynamic Tap Trigger: Fast baking streaks can provoke a thief if off cooldown
+  if (!isThiefActive && (cacheShowMyCookie || 0) >= 35 && (Date.now() - lastThiefEndTime > THIEF_COOLDOWN_MS)) {
+    if (comboStreak >= 12 && Math.random() < 0.035) {
+      checkAndSpawnThief();
+    }
+  }
 }
 
 function spawnParticle(x, y, text, isNegative = false) {
@@ -205,13 +212,6 @@ function showMyCookie() {
       document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
       localStorage.setItem("cookies", cacheShowMyCookie);
       updateVaultTelemetry();
-      
-      // Random Thief Trigger
-      if (cacheShowMyCookie > 40 && !isThiefActive) {
-        if (Math.random() * 10 > 7) {
-          setTimeout(thief, 2500);
-        }
-      }
     }
   })
   .catch(err => console.error("Error fetching cookies:", err));
@@ -334,13 +334,54 @@ function showGiftNotice(msg, type) {
   }, 5000);
 }
 
-// Interactive Thief Hazard Event
+// ==========================================================================
+// Interactive Thief Hazard Event & Dynamic Difficulty Scaling (DDS)
+// ==========================================================================
 let isThiefActive = false;
 let activeThiefDefendFn = null;
+let thiefTimer = null;
+let lastThiefEndTime = 0;
+const THIEF_COOLDOWN_MS = 14000; // 14s minimum breather between thief invasions
+
+function getThiefInterval() {
+  const cookies = Math.max(0, cacheShowMyCookie || 0);
+  // Dynamic Frequency Curve:
+  // - 35 to 100 cookies: every 45 - 60 seconds (rare, gentle introduction)
+  // - 500 to 2,000 cookies: every 28 - 38 seconds (steady arcade pressure)
+  // - 10,000+ cookies: every 18 - 25 seconds (active high-stakes vault defense)
+  const factor = Math.min(1, Math.max(0, (Math.log10(Math.max(10, cookies)) - 1.5) / 3.0));
+  const baseSec = Math.round(50 - factor * 30); // 50s down to 20s
+  const jitter = Math.floor(Math.random() * 8) - 4; // ±4s jitter
+  return Math.max(16, baseSec + jitter) * 1000;
+}
+
+function scheduleNextThief(delayMs = null) {
+  if (thiefTimer) clearTimeout(thiefTimer);
+  const delay = delayMs !== null ? delayMs : getThiefInterval();
+  thiefTimer = setTimeout(() => {
+    checkAndSpawnThief();
+  }, delay);
+}
+
+function checkAndSpawnThief() {
+  const now = Date.now();
+  if (isThiefActive || (now - lastThiefEndTime < THIEF_COOLDOWN_MS)) {
+    scheduleNextThief(7000);
+    return;
+  }
+  // Safe zone: require at least 35 cookies before thieves start appearing
+  if ((cacheShowMyCookie || 0) >= 35) {
+    thief();
+  } else {
+    scheduleNextThief(12000);
+  }
+}
 
 function thief() {
   if (isThiefActive) return;
   isThiefActive = true;
+
+  const currentCookies = Math.max(0, cacheShowMyCookie || 0);
 
   const thiefBanner = document.getElementById("thiefBanner");
   const statusPill = document.getElementById("cabinetStatusPill");
@@ -360,7 +401,7 @@ function thief() {
   const thiefEl = document.createElement("div");
   thiefEl.className = "thief-sprite-container";
 
-  // Health bar pips
+  // Health bar pips (3 hits to defeat)
   const healthBar = document.createElement("div");
   healthBar.className = "thief-health-bar";
   const pips = [];
@@ -403,8 +444,8 @@ function thief() {
         sfxMalingMati.currentTime = 0;
         sfxMalingMati.play().catch(() => {});
       }
-      // Reward Bounty for defending!
-      const bounty = 30;
+      // Reward Bounty: 5% of stash (min 30, max 2500 cookies)
+      const bounty = Math.max(30, Math.min(2500, Math.floor(currentCookies * 0.05)));
       cacheShowMyCookie = (cacheShowMyCookie || 0) + bounty;
       tapcookie += bounty;
       document.getElementById("showCookies").textContent = cacheShowMyCookie.toLocaleString();
@@ -418,7 +459,7 @@ function thief() {
   thiefEl.addEventListener("click", hitThief);
   activeThiefDefendFn = hitThief;
 
-  // Calculate path toward the cookie target
+  // Calculate path toward the giant cookie target
   const cookieRect = document.getElementById("cookieTap").getBoundingClientRect();
   const targetX = cookieRect.left + cookieRect.width / 2 - 35;
   const targetY = cookieRect.top + cookieRect.height / 2 - 35;
@@ -431,7 +472,13 @@ function thief() {
   thiefEl.style.left = posX + "px";
   thiefEl.style.top = posY + "px";
 
-  const speed = 1.6;
+  // Dynamic Speed Curve:
+  // - Starts at 1.35 px/frame (~4.5s travel) at 35-100 cookies
+  // - Smoothly increases with log10(cookies)
+  // - Hard capped at 2.50 px/frame (~2.3s travel) so ordinary human reaction + 3 clicks is ALWAYS 100% fair and winnable!
+  const progress = Math.min(1, Math.max(0, (Math.log10(Math.max(10, currentCookies)) - 1.5) / 3.2));
+  const speed = 1.35 + progress * 1.15; // Range: 1.35 to 2.50
+
   const moveInterval = setInterval(() => {
     if (!isThiefActive) {
       clearInterval(moveInterval);
@@ -477,8 +524,8 @@ function thief() {
     }
 
     // Spawn floating negative particle over cookie
-    const cookieRect = document.getElementById("cookieTap").getBoundingClientRect();
-    spawnParticle(cookieRect.left + cookieRect.width / 2, cookieRect.top, "-" + stolen + " STOLEN! 🏃💨", true);
+    const cRect = document.getElementById("cookieTap").getBoundingClientRect();
+    spawnParticle(cRect.left + cRect.width / 2, cRect.top, "-" + stolen + " STOLEN! 🏃💨", true);
 
     // Flash Alert Banner with breached state
     if (thiefBanner) {
@@ -522,6 +569,8 @@ function thief() {
     }
     if (thiefEl.parentNode) thiefEl.remove();
     updateTickerStatus("BAKE &amp; DEFEND! &#127850;");
+    lastThiefEndTime = Date.now();
+    scheduleNextThief(); // Queue next invasion respecting cooldown and cookie scaling
   }
 }
 
@@ -920,5 +969,6 @@ window.addEventListener("keyup", (e) => {
   }
 });
 
-// Initial Load
+// Initial Load & Thief Invasion Scheduler
 showMyCookie();
+scheduleNextThief(15000);
