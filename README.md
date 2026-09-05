@@ -52,6 +52,7 @@ cookie-tap/
 ├── main.py              # Flask server and route handlers
 ├── database.py          # SQLite persistence, password hashing, and cache
 ├── requirements.txt     # Python dependencies
+├── LICENSE              # MIT license
 ├── VERSION_DIFFERENCES.md # Upstream vs. fork technical changelog
 ├── data/                # SQLite database and periodic JSON backups
 │   ├── cookie_tap.db    # WAL-mode persistent database
@@ -125,4 +126,10 @@ cookie-tap/
 ## Origin and Credits
 
 This repository is an updated standalone version of the original [cookie-tap](https://github.com/risal098/cookie-tap) project by [@risal098](https://github.com/risal098). The original ran across two separate Replit services. This fork consolidates the architecture into a single runnable app, fixes race conditions during client-server synchronization, updates the user interface, and adds dynamic thief hazard scaling.
+
+---
+
+## License
+
+This project is open-source software licensed under the [MIT License](LICENSE).
 
